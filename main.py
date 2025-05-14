@@ -1,6 +1,3 @@
-# importamos librerías
-from libraries import *
-
 def analisisVentasPorMes(año: int) -> None:
     ...
 
