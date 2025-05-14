@@ -3,3 +3,4 @@ psycopg2
 uvicorn
 faker
 pymongo
+matplotlib

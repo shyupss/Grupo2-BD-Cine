@@ -1,3 +1,6 @@
+import matplotlib
+import psycopg2
+
 def analisisVentasPorMes(año: int) -> None:
     ...
 
@@ -8,7 +11,7 @@ def productoMasVendidoPorMes(año: int) -> None:
     ...
 
 def main():
-    #código
+
     print("n")
     ...
 
