@@ -38,7 +38,7 @@ def crear_bd_cine():
         conn_sr.commit()
         print("> Permisos para usuario_emprendimiento concedidos con éxito")
 
-        # Cerrar conexión de postgres a inventario_emprendimiento
+        # Cerrar conexión de postgres a bd_user
         cur_sr.close()
         conn_sr.close()
 
