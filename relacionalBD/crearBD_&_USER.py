@@ -2,7 +2,7 @@ import psycopg2
 from getpass import getpass
 
 # Crea la base de datos, el usuario, su contraseña y otorga los permisos al usuario desde el user "postgress"
-def crear_inventario_emprendimiento():
+def crear_bd_cine():
     '''
     Crea la base de datos 'bd_cine' y luego a su usuario 'user_cine' 
     junto con sus permisos.
@@ -60,7 +60,7 @@ def crear_esquema_bd():
         conn_sr = psycopg2.connect(
             database="bd_cine",
             user="user_cine",
-            password=f"{clave}",
+            password="1234",
             host="localhost"
         )
         cur_sr = conn_sr.cursor()
@@ -103,7 +103,7 @@ if __name__ == "__main__":
         )
         cur = conn.cursor()
         print(f"> Conexión exitosa\nUser: {conn.info.user}\nBase de datos: {conn.info.dbname}")
-        crear_inventario_emprendimiento()
+        crear_bd_cine()
         crear_esquema_bd()
 
         cur.close()
