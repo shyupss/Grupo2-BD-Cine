@@ -17,7 +17,7 @@ def crear_inventario_emprendimiento():
         cur.execute("CREATE USER user_cine WITH PASSWORD '1234';")
         cur.execute("GRANT CONNECT ON DATABASE bd_cine TO user_cine;")
 
-        print("> Base de datos inventario_emprendimiento creada")
+        print("> Base de datos bc_cine creada")
         print("> Usuario creado exitosamente\nNombre: user_cine\nContraseña: 1234")
 
         conn.set_session(autocommit=False)
@@ -44,7 +44,7 @@ def crear_inventario_emprendimiento():
 
     except Exception as e:
         conn.rollback()
-        print(f"# Error con la creación de inventario_emprendimientos\nDetalle -> {e}")
+        print(f"# Error con la creación de bd_cine\nDetalle -> {e}")
 
 # Crea el modelo de la bd
 def crear_esquema_bd():
@@ -64,10 +64,10 @@ def crear_esquema_bd():
             host="localhost"
         )
         cur_sr = conn_sr.cursor()
-        print("> postgres conectado con éxito a inventario_emprendimiento")
+        print("> postgres conectado con éxito a bd_cine")
     except Exception as e:
         run_script = False
-        print(f"# Error al conectar a inventario_emprendimiento\nDetalle -> {e}")
+        print(f"# Error al conectar a bd_user\nDetalle -> {e}")
     
     # Crear el modelo
     if run_script:
