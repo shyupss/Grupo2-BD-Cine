@@ -2,77 +2,70 @@ import psycopg2
 from getpass import getpass
 
 # Crea la base de datos, el usuario, su contraseña y otorga los permisos al usuario desde el user "postgress"
-def crear_bd_cine():
-    '''
-    Crea la base de datos 'bd_cine' y luego a su usuario 'user_cine' 
-    junto con sus permisos.
-    '''
+def crear_db_cine(conn, cur, clave):
+
     try:
         conn.set_session(autocommit=True)
 
         # Crear la base de datos
-        cur.execute("CREATE DATABASE bd_cine;")
+        cur.execute("CREATE DATABASE db_cine;")
 
         # Crear el usuario para la base de datos
         cur.execute("CREATE USER user_cine WITH PASSWORD '1234';")
-        cur.execute("GRANT CONNECT ON DATABASE bd_cine TO user_cine;")
+        cur.execute("GRANT CONNECT ON DATABASE db_cine TO user_cine;")
 
-        print("> Base de datos bc_cine creada")
+        print("> Base de datos 'db_cine' creada")
         print("> Usuario creado exitosamente\nNombre: user_cine\nContraseña: 1234")
 
         conn.set_session(autocommit=False)
 
         # Conectarse a la nueva base de datos
         conn_sr = psycopg2.connect(
-            database="bd_cine",
-            user="user_cine",
+            database="db_cine",
+            user="postgres",
             password=f"{clave}",
             host="localhost"
         )
         cur_sr = conn_sr.cursor()
 
         # Otorgar permisos a usuario_emprendimiento
-        cur_sr.execute("GRANT USAGE ON SCHEMA public TO user_cine;")
+        cur_sr.execute("GRANT USAGE, CREATE ON SCHEMA public TO user_cine;")
         cur_sr.execute("GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO user_cine;")
         cur_sr.execute("ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO user_cine;")
         conn_sr.commit()
-        print("> Permisos para usuario_emprendimiento concedidos con éxito")
+        print("> Permisos para user_cine concedidos con éxito")
 
-        # Cerrar conexión de postgres a bd_user
+        # Cerrar conexión de postgres a db_user
         cur_sr.close()
         conn_sr.close()
 
     except Exception as e:
         conn.rollback()
-        print(f"# Error con la creación de bd_cine\nDetalle -> {e}")
+        print(f"# Error con la creación de db_cine\nDetalle -> {e}")
 
 # Crea el modelo de la bd
-def crear_esquema_bd():
-    '''
-    Crea el esquema de la base de datos de análisis del sistema de emprendimiento\n
-    Tener el archivo sql en la misma carpeta que este script python pls\n
-    Link dbdiagram: https://dbdiagram.io/d/InventarioEmprendimiento-681f06245b2fc4582fff5e2b
-    '''
+def crear_esquema_db():
+
     run_script = True
 
     # Conexión a la nueva base de datos
     try:
         conn_sr = psycopg2.connect(
-            database="bd_cine",
+            database="db_cine",
             user="user_cine",
             password="1234",
             host="localhost"
         )
         cur_sr = conn_sr.cursor()
-        print("> postgres conectado con éxito a bd_cine")
+        print("> postgres conectado con éxito a db_cine")
     except Exception as e:
         run_script = False
-        print(f"# Error al conectar a bd_user\nDetalle -> {e}")
+        print(f"# Error al conectar a db_user\nDetalle -> {e}")
     
     # Crear el modelo
     if run_script:
         try:
-            with open("./data/modeloCine.sql", 'r', encoding="utf-8") as f:
+            with open("./data/modeloDb.sql", 'r', encoding="utf-8") as f:
                 script = f.read()
             
             for statement in script.split(';'):
@@ -90,7 +83,7 @@ def crear_esquema_bd():
         cur_sr.close()
         conn_sr.close()
 
-if __name__ == "__main__":
+def creaBdUser(): #funcion exportada hacia main.py
     
     # Conexión a postgres en ámbito global
     clave = getpass("Ingrese su contraseña del usuario postgres: ")
@@ -103,8 +96,9 @@ if __name__ == "__main__":
         )
         cur = conn.cursor()
         print(f"> Conexión exitosa\nUser: {conn.info.user}\nBase de datos: {conn.info.dbname}")
-        crear_bd_cine()
-        crear_esquema_bd()
+        
+        crear_db_cine(conn, cur, clave)
+        crear_esquema_db()
 
         cur.close()
         conn.close()
