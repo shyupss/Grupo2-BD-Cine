@@ -232,9 +232,9 @@ class ConsultasSql:
         except Exception as e: print(f"# Error con el analisis 'edad por genero'\nDetalle -> {e}")
 
 
-obj = ConsultasSql()
-obj.analisis_top_10_peliculas_mas_vistas(2024)
-obj.analisis_top_10_generos_menos_vistos(2024)
-obj.analisis_ventas_anuales(2024)
-obj.analisis_ventas_anuales_por_genero(2024)
-obj.analisis_edad_por_genero_pelicula(2024)
+#obj = ConsultasSql()
+#obj.analisis_top_10_peliculas_mas_vistas(2024)
+#obj.analisis_top_10_generos_menos_vistos(2024)
+#obj.analisis_ventas_anuales(2024)
+#obj.analisis_ventas_anuales_por_genero(2024)
+#obj.analisis_edad_por_genero_pelicula(2024)

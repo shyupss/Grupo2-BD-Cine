@@ -88,7 +88,7 @@ def crear_esquema_db(conn, cur):
 
 
 
-def creaBdUser(): #funcion exportada hacia main.py
+def creaDbUser(): #funcion exportada hacia main.py
     
     # Conexión a postgres en ámbito global
     clave = getpass("Ingrese su contraseña del usuario postgres: ")
@@ -124,9 +124,6 @@ def creaBdUser(): #funcion exportada hacia main.py
         print(f"# Fallo de conexión\nDetalle -> {e}")
 
     finally: SqlObj.cerrar_conexiones(conn=conn, cur=cur)
-
-
-
 
 
 # Inserta datos a través de la ejecución de un script .sql

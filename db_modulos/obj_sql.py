@@ -1,6 +1,5 @@
 import gc
 import psycopg2
-import matplotlib
 
 class SqlObj:
 
@@ -33,7 +32,8 @@ class SqlObj:
             SqlObj.cerrar_conexiones(conn=self.conn, cur=self.cur)
             print(f"# Error al conectarse hacia la base de datos.\nDetalle -> {e}")
 
-    def cerrar_conexion(self): SqlObj.cerrar_conexiones(conn=self.conn, cur=self.cur)
+    def cerrar_conexion(self): 
+        SqlObj.cerrar_conexiones(conn=self.conn, cur=self.cur)
 
     @staticmethod
     def cerrar_conexiones(**kwargs):
