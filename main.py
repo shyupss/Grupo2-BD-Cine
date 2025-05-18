@@ -33,13 +33,11 @@ def main():
 
     # Se crea la DB 'db_cine' con su respectivo esquema
     consultaExistenciaBD = str(input("Si desea crear 'db_cine' con su respectivo esquema ingrese cualquier carácter, de lo contrario simplemente 'Enter': "))
-    if(consultaExistenciaBD != ""):
-        creaBdUser()
+    if(consultaExistenciaBD != ""): creaBdUser()
 
     # Se insertan datos sobre la DB usando el User
     consultaInsercionBD = str(input("Si desea ingresar datos de prueba a la DB, ingrese cualquier carácter, de lo contrario simplemente 'Enter': "))
-    if(consultaInsercionBD != ""):
-        insercionDatosPrueba() # Hay un error con la insercion de los datos, falta solucionar
+    if(consultaInsercionBD != ""): insercionDatosPrueba() # Hay un error con la insercion de los datos, falta solucionar
 
     # Se crea el objeto mediante el cual se realizarán las peticiones, para hacer distintos gráficos
     objectSql = SqlPeticiones(None)

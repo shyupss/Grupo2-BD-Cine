@@ -1,4 +1,3 @@
-
 --- 1. llenar 1500 clientes
 
 DO $$
@@ -25,7 +24,7 @@ INSERT INTO pelicula (titulo) VALUES
 ---febrero
 ('KUNG FU PANDA 4'),
 ('DUNA: PARTE DOS'),
-('MADAME WEB')
+('MADAME WEB'),
 ('BOB MARLEY: LA LEYENDA'),
 ('ANATOMIA DE UNA CAIDA'),
 ---marzo
@@ -75,7 +74,7 @@ INSERT INTO pelicula (titulo) VALUES
 ('PESADILLA EN ELM SREET: 40 ANIVERSARIO'),
 ('LA SUSTANCIA'),
 ('TERRIFIER 3'),
-('VENOM: EL ULTIMO BAILE')
+('VENOM: EL ULTIMO BAILE'),
 ---noviembre
 ('GLADIADOR 2'),
 ('EL CONDE DE MONTECRISTO'),
@@ -127,11 +126,9 @@ INSERT INTO sala (tipo, n_asientos) VALUES
 DO $$
 BEGIN
   FOR i IN 1..5 LOOP
-    FOR j in 1..300 LOOP
-        INSERT INTO asiento(disponible)
-            VALUES (
-                1
-            );
+    FOR j IN 1..300 LOOP
+      INSERT INTO asiento(disponible)
+      VALUES (TRUE);
     END LOOP;
   END LOOP;
 END $$;
