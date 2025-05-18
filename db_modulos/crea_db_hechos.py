@@ -1,12 +1,7 @@
 import psycopg2
-from getpass import getpass
 
-# Cerrar conexiones de forma segura
-def cerrar_conexiones(**kwargs):
-    for nombre, obj in kwargs.items():
-        if obj:
-            try: obj.close()
-            except Exception as e: print(f"# Error al intentar cerrar '{nombre}'\nDetalle -> {e}")
+from db_modulos.obj_sql import SqlObj
+from getpass import getpass
 
 # Crea la base de datos, el usuario, su contraseña y otorga los permisos al usuario desde el user "postgress"
 def crear_db_cine(conn, cur, clave):
@@ -72,6 +67,10 @@ def crear_db_cine(conn, cur, clave):
         conn.rollback()
         print(f"# Error con la creación de db_cine\nDetalle -> {e}")
 
+
+
+
+
 # Crea el modelo de la bd
 def crear_esquema_db(conn, cur):
         try:
@@ -84,6 +83,10 @@ def crear_esquema_db(conn, cur):
         except Exception as e:
             conn.rollback()
             print(f"# Error con la creación del esquema\nDetalle -> {e}")
+
+
+
+
 
 def creaBdUser(): #funcion exportada hacia main.py
     
@@ -101,7 +104,7 @@ def creaBdUser(): #funcion exportada hacia main.py
         print(f"> Conexión exitosa\nUser: {conn.info.user}\nBase de datos: {conn.info.dbname}")
 
         crear_db_cine(conn, cur, clave)
-        cerrar_conexiones(conn=conn, cur=cur)
+        SqlObj.cerrar_conexiones(conn=conn, cur=cur)
 
         # Conexión a postgres como usuario especifico del codigo
         conn = psycopg2.connect(
@@ -114,10 +117,42 @@ def creaBdUser(): #funcion exportada hacia main.py
         print(f"> Conexión exitosa\nUser: {conn.info.user}\nBase de datos: {conn.info.dbname}")
         
         crear_esquema_db(conn, cur)
-        cerrar_conexiones(conn=conn, cur=cur)
+        SqlObj.cerrar_conexiones(conn=conn, cur=cur)
 
     except Exception as e:
         conn.rollback()
         print(f"# Fallo de conexión\nDetalle -> {e}")
 
-    finally: cerrar_conexiones(conn=conn, cur=cur)
+    finally: SqlObj.cerrar_conexiones(conn=conn, cur=cur)
+
+
+
+
+
+# Inserta datos a través de la ejecución de un script .sql
+def insercionDatosPrueba():
+
+    try:
+        # Conexion
+        try:
+            conn_sr = psycopg2.connect(
+                database="db_cine",
+                user="user_cine",
+                password="1234",
+                host="localhost"
+            )
+            cur_sr = conn_sr.cursor()
+            print("> postgres conectado con éxito a db_cine")
+
+        except Exception as e: print(f"# Error al conectar a db_user\nDetalle -> {e}")
+
+        # Insercion
+        with open("./data/insercionDb.sql", 'r', encoding="utf-8") as script:
+            cur_sr.execute(script.read())
+            conn_sr.commit()
+
+        print("> Datos insertados con exito!")
+        
+    except Exception as e: print(f"Se ha producido un error al insertar los datos\nDetalle -> {e}")
+
+    finally: SqlObj.cerrar_conexiones(conn_sr=conn_sr, cur_sr=cur_sr)
