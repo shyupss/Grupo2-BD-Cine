@@ -31,7 +31,7 @@ CREATE TABLE "pelicula" (
   "id" serial PRIMARY KEY,
   "titulo" varchar,
   "director" varchar,
-  "duracion" timestamp,
+  "duracion" time,
   "clasificacion_etaria" varchar,
   "genero" varchar,
   "sinopsis" text
