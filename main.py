@@ -54,7 +54,9 @@ Que desea análizar sobre la base de datos?
             case default:
                 print("Ingrese algúna petición válida...\n")
 
-        break
+        seguir = str(input("Desea realizar otro análizis? [Y/Yes = si, Cualquier otro = no]")).lower()
+        if(seguir != "y" or seguir != "yes"):
+            break
     
 
 if ("__main__" == __name__):
