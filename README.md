@@ -21,11 +21,10 @@ El sistema gestiona:
 
 ### Objetivo
 
-El objetivo principal es proporcionar una base sólida para la toma de decisiones comerciales a partir del análisis de los datos, facilitando acciones como:
+El objetivo principal es proporcionar una base sólida para la toma de decisiones comerciales a partir del **análisis de los datos**, facilitando acciones como:
 
 - Ajuste de horarios y cartelera según demanda.
 - Promociones personalizadas.
-- Optimización de la distribución de salas y precios.
 
 ---
 
