@@ -44,13 +44,23 @@ class ConsultasSql:
             ax.bar(titulos, ventas)
             ax.set_title(f"Top 10 Películas por Ventas en {anio}")
             ax.set_ylabel("Número de boletos vendidos")
+
+            # solución
+            ax.set_xticks(range(len(titulos))) 
+
             ax.set_xticklabels(titulos, rotation=45, ha="right")
             plt.tight_layout()
 
-            # Guardar y mostrar
-            ruta = f"graficos/{inspect.currentframe().f_code.co_name}_{anio}.png"
+            # Guardar y mostrar...
+
+            # Asegurar que la carpeta "graficos" exista
+            os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
+
+            # Guardamos el gráfico
+            ruta = f"graficos/{inspect.currentframe().f_code.co_name}/{anio}.png"
             plt.savefig(ruta)
-            plt.show()
+
+            #plt.show()
             print(f"Gráfico guardado en {ruta}")
 
         except Exception as e: print(f"# Error con el analisis 'top 10 peliculas mas vendidas'\nDetalle -> {e}")
@@ -83,10 +93,16 @@ class ConsultasSql:
             plt.title(f'10 géneros menos vistos en {anio}')
             plt.tight_layout()
 
-            # Guardar figura
-            ruta = f'graficos/{inspect.currentframe().f_code.co_name}_{anio}.png'
+            # Guardar figura...
+
+            # Asegurar que la carpeta "graficos" exista
+            os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
+
+            # Guardamos
+            ruta = f'graficos/{inspect.currentframe().f_code.co_name}/{anio}.png'
             plt.savefig(ruta)
-            plt.show()
+
+            #plt.show()
             print(f'Gráfico guardado en: {ruta}')
 
         except Exception as e: print(f"# Error con el analisis 'top 10 generos menos vendidos'\nDetalle -> {e}")
@@ -120,10 +136,16 @@ class ConsultasSql:
             plt.xticks(meses)
             plt.grid(True)
 
-            # Guardar y mostrar
-            ruta = f'graficos/{inspect.currentframe().f_code.co_name}_{anio}.png'
+            # Guardar y mostrar...
+
+            # Asegurar que la carpeta "graficos" exista
+            os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
+
+            # Guardamos
+            ruta = f'graficos/{inspect.currentframe().f_code.co_name}/{anio}.png'
             plt.savefig(ruta)
-            plt.show()
+
+            #plt.show()
             print(f"Gráfico guardado en: {ruta}")
 
         except Exception as e: print(f"# Error con el analisis 'ventas anuales'\nDetalle -> {e}")
@@ -173,10 +195,16 @@ class ConsultasSql:
             plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=9)
             plt.tight_layout(rect=[0, 0, 1, 1])
 
-            # Guardar y mostrar
-            ruta = f'graficos/{inspect.currentframe().f_code.co_name}_{anio}.png'
-            plt.savefig(ruta, dpi=300)
-            plt.show()
+            # Guardar y mostrar...
+
+            # Asegurar que la carpeta "graficos" exista
+            os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
+
+            # Guardamos
+            ruta = f'graficos/{inspect.currentframe().f_code.co_name}/{anio}.png'
+            plt.savefig(ruta)
+
+            #plt.show()
             print(f"Gráfico guardado en: {ruta}")
 
         except Exception as e: print(f"# Error con el analisis 'ventas anuales por genero'\nDetalle -> {e}")
@@ -223,10 +251,16 @@ class ConsultasSql:
             ax.set_title(f"Rangos Etarios por Género más visto en {anio}")
             plt.tight_layout()
 
-            # Guardar y mostrar
-            ruta = f'graficos/{inspect.currentframe().f_code.co_name}_{anio}.png'
+            # Guardar y mostrar...
+
+            # Asegurar que la carpeta "graficos" exista
+            os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
+
+            # Guardamos
+            ruta = f'graficos/{inspect.currentframe().f_code.co_name}/{anio}.png'
             plt.savefig(ruta)
-            plt.show()
+
+            #plt.show()
             print(f"Gráfico guardado en: {ruta}")
 
         except Exception as e: print(f"# Error con el analisis 'edad por genero'\nDetalle -> {e}")

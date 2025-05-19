@@ -1,14 +1,16 @@
+import argparse
+
 from db_modulos.crea_db_hechos import creaDbUser, insercionDatosPrueba
 from analisis import ConsultasSql #Objeto de consultas
 
-def solicitaAnio():
-    while True:
-        anioSolicitado = str(input("Ingrese el año que desea analizar: "))
-        if(anioSolicitado.isdigit):
-            return int(anioSolicitado)
-        else: print("Por favor, ingrese un año válido...")
-
 def main():
+    # Recibimos el año
+    parser = argparse.ArgumentParser(description="Analizar ventar de cine")
+    parser.add_argument("anio", type=int, help="Año a analizar")
+    anioAnalizis = parser.parse_args().anio
+
+    # año recibido
+    print(anioAnalizis)
 
     # Se crea la DB 'db_cine' con su respectivo esquema
     consultaExistenciaBD = str(input("Crear 'db_cine' con su respectivo esquema [Y/Yes = si, Cualquier Otro = no]: ")).lower()
@@ -34,19 +36,19 @@ Que desea análizar sobre la base de datos?
         
         match peticion:
             case "1":
-                objectSql.analisis_top_10_peliculas_mas_vistas(solicitaAnio())
+                objectSql.analisis_top_10_peliculas_mas_vistas(anioAnalizis)
                 break
             case "2":
-                objectSql.analisis_top_10_generos_menos_vistos(solicitaAnio())
+                objectSql.analisis_top_10_generos_menos_vistos(anioAnalizis)
                 break
             case "3":
-                objectSql.analisis_ventas_anuales(solicitaAnio())
+                objectSql.analisis_ventas_anuales(anioAnalizis)
                 break
             case "4":
-                objectSql.analisis_ventas_anuales_por_genero(solicitaAnio())
+                objectSql.analisis_ventas_anuales_por_genero(anioAnalizis)
                 break
             case "5":
-                objectSql.analisis_edad_por_genero_pelicula(solicitaAnio())
+                objectSql.analisis_edad_por_genero_pelicula(anioAnalizis)
                 break
             case "6":
                 # llamar al método restante
