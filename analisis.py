@@ -5,7 +5,7 @@ from metodosAnalisis import ConsultasSql #Objeto de consultas
 
 def main():
     # Recibimos el año
-    parser = argparse.ArgumentParser(description="Analizar ventar de cine")
+    parser = argparse.ArgumentParser(description="Analizar ventas de cine")
     parser.add_argument("anio", type=int, help="Año a analizar")
     anioAnalizis = parser.parse_args().anio
 
@@ -32,7 +32,7 @@ def main():
     > La ventas de algún año en particular [3]
     > Las ventas por género en algún año [4]
     > La edad por género de peliculas [5]
-    > Falta la última consulta [6]
+    > Películas con mayor recaudación mensual del año [6]
                 """))
             
             match peticion:
@@ -52,7 +52,7 @@ def main():
                     objectSql.analisis_edad_por_genero_pelicula(anioAnalizis)
                     break
                 case "6":
-                    # llamar al método restante
+                    objectSql.analisis_pelicula_con_mayor_recaudacion_por_mes(anioAnalizis)
                     break
                 case _:
                     print("Ingrese algúna petición válida...\n")

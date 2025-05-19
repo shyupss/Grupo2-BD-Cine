@@ -265,6 +265,83 @@ class ConsultasSql:
 
         except Exception as e: print(f"# Error con el analisis 'edad por genero'\nDetalle -> {e}")
 
+    def analisis_pelicula_con_mayor_recaudacion_por_mes(self, anio):
+        try:
+            # consulta anidada para sacar las q más recaudación tuvieron x mes
+            consulta = f'''
+                    WITH recaudacion_mensual AS (
+                        SELECT
+                            DATE_TRUNC('month', bol.hora_compra) AS mes,
+                            p.id AS id_pelicula,
+                            p.titulo,
+                            SUM(bol.precio) AS total_recaudado
+                        FROM hechos_boletos bol
+                        JOIN pelicula p ON bol.id_pelicula = p.id
+                        WHERE EXTRACT(YEAR FROM bol.hora_compra) = {anio}
+                        GROUP BY mes, p.id, p.titulo
+                    ),
+                    maximos_por_mes AS (
+                        SELECT
+                            mes,
+                            MAX(total_recaudado) AS max_recaudo
+                        FROM recaudacion_mensual
+                        GROUP BY mes
+                    )
+                    SELECT
+                        r.mes,
+                        r.titulo,
+                        r.total_recaudado
+                    FROM recaudacion_mensual r
+                    JOIN maximos_por_mes m
+                        ON r.mes = m.mes AND r.total_recaudado = m.max_recaudo
+                    ORDER BY r.mes;
+                '''
+
+            self.obj.cur.execute(consulta)
+            resultados = self.obj.cur.fetchall()
+            if not resultados: raise Exception(f"No se obtuvieron datos de recaudación para el año {anio}.")
+
+            #eje X (meses)
+            meses = [MESES[row[0].month - 1] for row in resultados]
+            peliculas = [row[1] for row in resultados]
+
+            #eje Y
+            recaudaciones = [row[2] for row in resultados]
+
+            plt.figure(figsize=(10, 6))
+            bars = plt.bar(meses, recaudaciones, color='indianred')
+
+            #d las barras obtenidas ponerles las etiquetas
+            for i, bar in enumerate(bars):
+                altura = bar.get_height()
+                plt.text(bar.get_x() + bar.get_width() / 2,
+                    altura * 0.5,
+                    peliculas[i],
+                    ha='center',
+                    va='center',
+                    fontsize=10,
+                    color='white',
+                    rotation=90)
+
+            plt.title(f'Películas con más recaudación por mes del año {anio}')
+            plt.xlabel('Mes')
+            plt.ylabel('Recaudación en pesos chilenos (CLP)')
+            plt.xticks(rotation=45)
+            plt.ylim(0, max(recaudaciones) * 1.2)
+            plt.grid(axis='y', linestyle='--')
+
+            # Asegurar que la carpeta "graficos" exista
+            os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
+
+            # Guardamos
+            ruta = f'graficos/{inspect.currentframe().f_code.co_name}/{anio}.png'
+            plt.savefig(ruta)
+
+            #plt.show()
+            print(f"Gráfico guardado en: {ruta}")
+
+        except Exception as e: print(f"# Error con analisis_pelicula_con_mayor_recaudacion_por_mes \nDetalle -> {e}")
+
     def cerrar(self):
         self.obj.cerrar_conexion()
 
