@@ -67,5 +67,70 @@ Notar que luego de hacer este proceso, en VSCode deberías seleccionar como inte
 
 Con esto, el entorno virtual debería estar cargado y funcionando correctamente dentro de tu pc localmente.
 
+Por supuesto, aquí tienes la explicación completa en formato markdown, sin emojis, lista para que la copies y pegues en tu README:
+
+````markdown
+## Instrucciones de Uso del Análisis de Datos (`analisis.py`)
+
+Este script permite realizar distintos análisis sobre los datos almacenados en la base de datos `db_cine`. Al ejecutarlo, se generan gráficos y se muestran datos actualizados automáticamente según la información disponible. Es fundamental ejecutar el script desde el directorio raíz del proyecto, donde se encuentra el archivo `analisis.py`.
+
+---
+
+### Uso básico
+
+```bash
+python analisis.py [AÑO]
+````
+
+* `[AÑO]`: Corresponde al año para el cual se desea cargar o analizar los datos de ventas (por ejemplo, `2023` o `2020`).
+
+Ejemplo de uso:
+
+```bash
+python analisis.py 2023
+```
+
+---
+
+### Descripción del flujo del script
+
+1. El script pregunta si se desea crear la base de datos `db_cine` junto con su esquema correspondiente.
+2. Solicita la contraseña del usuario `postgres` para realizar las operaciones necesarias.
+3. Verifica si la base de datos y los usuarios ya existen y omite su creación si es así.
+4. Ofrece la opción de insertar datos de prueba en la base de datos.
+5. Se conecta como el usuario `user_cine` a la base de datos `db_cine`.
+6. Presenta un menú con las distintas opciones de análisis que el usuario puede elegir para obtener información relevante.
+
+---
+
+### Opciones de análisis disponibles
+
+Al iniciar el script, se muestra un menú con las siguientes opciones:
+
+1. Top 10 de las películas más vistas
+2. Top 10 de géneros menos vistos
+3. Ventas en un año particular
+4. Ventas por género en un año específico
+5. Edad promedio del público por género de películas
+6. Consulta adicional en desarrollo
+
+Para cada análisis seleccionado, el programa:
+
+* Genera y muestra un gráfico correspondiente.
+* Muestra los datos en consola.
+* Guarda el gráfico o actualiza el existente si ya fue generado antes.
+
+---
+
+### Consideraciones importantes
+
+* El script reutiliza los datos ya existentes en la base de datos y actualiza los gráficos con información vigente.
+* Si no existen datos de ventas para el año solicitado, el programa notificará al usuario y no generará gráficos.
+* Es necesario que el servidor de PostgreSQL esté activo y configurado correctamente para permitir conexiones.
+* El usuario por defecto para la conexión a la base de datos es `user_cine` con contraseña `1234`, a menos que se haya modificado.
+* El script debe ejecutarse siempre desde el directorio raíz del proyecto, para que funcione correctamente.
+
+---
+
 # Drive de nuestro proyecto: 
 https://drive.google.com/drive/folders/1VvjUhupeYfJFzTOzafxb42xrqYD864il
