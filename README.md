@@ -69,15 +69,16 @@ Con esto, el entorno virtual debería estar cargado y funcionando correctamente 
 
 Por supuesto, aquí tienes la explicación completa en formato markdown, sin emojis, lista para que la copies y pegues en tu README:
 
-````markdown
 ## Instrucciones de Uso del Análisis de Datos (`analisis.py`)
 
-Este script permite realizar distintos análisis sobre los datos almacenados en la base de datos `db_cine`. Al ejecutarlo, se generan gráficos y se muestran datos actualizados automáticamente según la información disponible. Es fundamental ejecutar el script desde el directorio raíz del proyecto, donde se encuentra el archivo `analisis.py`.
+Este script permite realizar distintos análisis sobre los datos almacenados en la base de datos `db_cine`.
+Al ejecutarlo, se generan gráficos y se muestran datos actualizados automáticamente según la información disponible.
+Es fundamental ejecutar el script desde el directorio raíz del proyecto, donde se encuentra el archivo `analisis.py`.
 
 ---
 
 ### Uso básico
-
+````markdown
 ```bash
 python analisis.py [AÑO]
 ````
