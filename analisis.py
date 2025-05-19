@@ -23,43 +23,42 @@ def main():
     # Se crea el objeto mediante el cual se realizarán las peticiones, para hacer distintos gráficos
     objectSql = ConsultasSql()
 
-    while(True):
-        peticion = str(input("""
-Que desea análizar sobre la base de datos?
-> El top 10 de las películas más vistas [1]
-> El top 10 de géneros menos vistos [2]
-> La ventas de algún año en particular [3]
-> Las ventas por género en algún año [4]
-> La edad por género de peliculas [5]
-> Falta la última consulta [6]
-              """))
-        
-        match peticion:
-            case "1":
-                objectSql.analisis_top_10_peliculas_mas_vistas(anioAnalizis)
-                break
-            case "2":
-                objectSql.analisis_top_10_generos_menos_vistos(anioAnalizis)
-                break
-            case "3":
-                objectSql.analisis_ventas_anuales(anioAnalizis)
-                break
-            case "4":
-                objectSql.analisis_ventas_anuales_por_genero(anioAnalizis)
-                break
-            case "5":
-                objectSql.analisis_edad_por_genero_pelicula(anioAnalizis)
-                break
-            case "6":
-                # llamar al método restante
-                break
-            case default:
-                print("Ingrese algúna petición válida...\n")
+    try:
+        while(True):
+            peticion = str(input("""
+    Que desea análizar sobre la base de datos?
+    > El top 10 de las películas más vistas [1]
+    > El top 10 de géneros menos vistos [2]
+    > La ventas de algún año en particular [3]
+    > Las ventas por género en algún año [4]
+    > La edad por género de peliculas [5]
+    > Falta la última consulta [6]
+                """))
+            
+            match peticion:
+                case "1":
+                    objectSql.analisis_top_10_peliculas_mas_vistas(anioAnalizis)
+                case "2":
+                    objectSql.analisis_top_10_generos_menos_vistos(anioAnalizis)
+                case "3":
+                    objectSql.analisis_ventas_anuales(anioAnalizis)
+                case "4":
+                    objectSql.analisis_ventas_anuales_por_genero(anioAnalizis)
+                case "5":
+                    objectSql.analisis_edad_por_genero_pelicula(anioAnalizis)
+                case "6":
+                    # llamar al método restante
+                    ...
+                case default:
+                    print("Ingrese algúna petición válida...\n")
 
-        seguir = str(input("Desea realizar otro análizis? [Y/Yes = si, Cualquier otro = no]")).lower()
-        if(seguir != "y" or seguir != "yes"):
-            break
-    
+            seguir = str(input("Desea realizar otro análizis? [Y/Yes = si, Cualquier otro = no]")).lower()
+            if(seguir != "y" or seguir != "yes"):
+                break
+    except Exception as e:
+        print(f"Hubo un error al momento de realizar algún análisis\nDetalle -> {e}")
+    finally:
+        objectSql.cerrar()
 
 if ("__main__" == __name__):
     main()

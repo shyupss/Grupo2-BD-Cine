@@ -123,7 +123,11 @@ def creaDbUser(): #funcion exportada hacia main.py
         conn.rollback()
         print(f"# Fallo de conexión\nDetalle -> {e}")
 
-    finally: SqlObj.cerrar_conexiones(conn=conn, cur=cur)
+    finally:
+        obj = SqlObj(database="db_cine", user="db_cine", password="1234", host="localhost")
+        obj.conn = conn
+        obj.cur = cur
+        obj.cerrar_conexion()
 
 
 # Inserta datos a través de la ejecución de un script .sql
@@ -152,4 +156,8 @@ def insercionDatosPrueba():
         
     except Exception as e: print(f"Se ha producido un error al insertar los datos\nDetalle -> {e}")
 
-    finally: SqlObj.cerrar_conexiones(conn_sr=conn_sr, cur_sr=cur_sr)
+    finally:
+        obj = SqlObj(database="db_cine", user="db_cine", password="1234", host="localhost")
+        obj.conn = conn_sr
+        obj.cur = cur_sr
+        obj.cerrar_conexion()

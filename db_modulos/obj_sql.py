@@ -33,13 +33,16 @@ class SqlObj:
             print(f"# Error al conectarse hacia la base de datos.\nDetalle -> {e}")
 
     def cerrar_conexion(self): 
-        SqlObj.cerrar_conexiones(conn=self.conn, cur=self.cur)
+        if self.cur:
+            try:
+                self.cur.close()
+            except Exception as e:
+                print(f"Error al cerrar el cursor\nDetalle -> {e}")
+            self.cur = None
 
-    @staticmethod
-    def cerrar_conexiones(**kwargs):
-        for nombre, obj in kwargs.items():
-            if obj:
-                try: obj.close()
-                except Exception as e: print(f"# Error al intentar cerrar '{nombre}'\nDetalle -> {e}")
-                finally: obj = None
-        gc.collect()
+        if self.conn:
+            try:
+                self.conn.close()
+            except Exception as e:
+                print(f"Error al cerrar la conexión\nDetalle -> {e}")
+            self.conn = None

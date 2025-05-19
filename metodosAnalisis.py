@@ -265,6 +265,9 @@ class ConsultasSql:
 
         except Exception as e: print(f"# Error con el analisis 'edad por genero'\nDetalle -> {e}")
 
+    def cerrar(self):
+        self.obj.cerrar_conexion()
+
 
 #obj = ConsultasSql()
 #obj.analisis_top_10_peliculas_mas_vistas(2024)
