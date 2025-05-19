@@ -15,7 +15,8 @@ class SqlObj:
 
         self.abrir_conexion()
 
-    def __del__(self): self.cerrar_conexion(self)
+    def __del__(self):
+        self.cerrar_conexion()
 
     def abrir_conexion(self):
         try:
