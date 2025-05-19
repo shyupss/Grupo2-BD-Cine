@@ -104,7 +104,9 @@ def creaDbUser(): #funcion exportada hacia main.py
         print(f"> Conexión exitosa\nUser: {conn.info.user}\nBase de datos: {conn.info.dbname}")
 
         crear_db_cine(conn, cur, clave)
-        SqlObj.cerrar_conexiones(conn=conn, cur=cur)
+        
+        if cur: cur.close()
+        if conn: conn.close()
 
         # Conexión a postgres como usuario especifico del codigo
         conn = psycopg2.connect(
@@ -124,10 +126,10 @@ def creaDbUser(): #funcion exportada hacia main.py
         print(f"# Fallo de conexión\nDetalle -> {e}")
 
     finally:
-        obj = SqlObj(database="db_cine", user="db_cine", password="1234", host="localhost")
-        obj.conn = conn
-        obj.cur = cur
-        obj.cerrar_conexion()
+        if cur:
+           cur.close()
+        if conn:
+           conn.close()
 
 
 # Inserta datos a través de la ejecución de un script .sql

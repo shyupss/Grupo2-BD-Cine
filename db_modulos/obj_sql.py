@@ -1,4 +1,3 @@
-import gc
 import psycopg2
 
 class SqlObj:
@@ -30,7 +29,6 @@ class SqlObj:
             print(f"> Conexión exitosa\nUser: {self.conn.info.user}\nBase de datos: {self.conn.info.dbname}")
 
         except Exception as e:
-            SqlObj.cerrar_conexiones(conn=self.conn, cur=self.cur)
             print(f"# Error al conectarse hacia la base de datos.\nDetalle -> {e}")
 
     def cerrar_conexion(self): 
