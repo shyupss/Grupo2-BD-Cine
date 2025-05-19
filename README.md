@@ -83,11 +83,12 @@ python analisis.py [AÑO]
 ````
 
 * `[AÑO]`: Corresponde al año para el cual se desea cargar o analizar los datos de ventas (por ejemplo, `2023` o `2020`).
+*Importante*: Para efectos de testeo de nuestra base de datos, solo se llenó con datos de enero del 2024 hasta abril del 2025. Si se manejan únicamente los datos suministrados por insercionDB.sql, probar solamente con el año 2024.
 
 Ejemplo de uso:
 
 ```bash
-python analisis.py 2023
+python analisis.py 2024
 ```
 
 ---
@@ -112,7 +113,7 @@ Al iniciar el script, se muestra un menú con las siguientes opciones:
 3. Ventas en un año particular
 4. Ventas por género en un año específico
 5. Edad promedio del público por género de películas
-6. Consulta adicional en desarrollo
+6. Películas con mayor recaudación mensual del año
 
 Para cada análisis seleccionado, el programa:
 

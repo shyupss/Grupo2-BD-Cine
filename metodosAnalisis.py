@@ -329,15 +329,11 @@ class ConsultasSql:
             plt.xticks(rotation=45)
             plt.ylim(0, max(recaudaciones) * 1.2)
             plt.grid(axis='y', linestyle='--')
-
-            # Asegurar que la carpeta "graficos" exista
             os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
 
             # Guardamos
             ruta = f'graficos/{inspect.currentframe().f_code.co_name}/{anio}.png'
             plt.savefig(ruta)
-
-            #plt.show()
             print(f"Gráfico guardado en: {ruta}")
 
         except Exception as e: print(f"# Error con analisis_pelicula_con_mayor_recaudacion_por_mes \nDetalle -> {e}")
