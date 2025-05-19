@@ -1,6 +1,46 @@
 # Proyecto guiado – Sistema de Gestión de Inventario para emprendimientos locales
 
-## Requerimientos (Instalar)
+## Requerimientos de Base de Datos Cine
+
+### ¿Para qué queremos usar esta base de datos?
+
+Este sistema está diseñado para gestionar de forma eficiente las proyecciones de películas en salas de cine, la venta de tickets, la asignación de asientos por boleto y la trazabilidad del comportamiento del cliente. La información recopilada permitirá realizar análisis comerciales y estratégicos que fortalezcan la toma de decisiones.
+
+---
+
+### Descripción
+
+El sistema gestiona:
+
+- Funciones programadas en distintas salas y horarios.
+- Venta de entradas y asignación específica de asientos.
+- Registro de clientes y preferencias.
+- Datos asociados a películas: género, clasificación, duración, etc.
+
+---
+
+### Objetivo
+
+El objetivo principal es proporcionar una base sólida para la toma de decisiones comerciales a partir del análisis de los datos, facilitando acciones como:
+
+- Ajuste de horarios y cartelera según demanda.
+- Promociones personalizadas.
+- Optimización de la distribución de salas y precios.
+
+---
+
+### Utilidades y Consultas clave
+
+El sistema permitirá responder preguntas relevantes para el negocio, tales como:
+
+- Tendencias de asistencia por día de la semana y horario (por ejemplo, identificar franjas horarias con mayor o menor venta de entradas).
+- Recaudación total y segmentada por tipo de sala (2D, 3D, IMAX) y tipo de asiento (reclinable, estándar, VIP).
+- Popularidad de películas según su género, duración y clasificación etaria.
+- Análisis de comportamiento del público: segmentación por edad, frecuencia de asistencia y preferencias de género cinematográfico.
+
+---
+
+## Requerimientos/Necesidades del sistema (Instalar)
 
 Para instalar los requerimientos del proyecto, necesitas crear un entorno virtual luego de clonar el repositorio, esto se hace con los siguientes comandos (ejecutar en directorio raíz del proyecto):
 
