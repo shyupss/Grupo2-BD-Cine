@@ -4,3 +4,4 @@ uvicorn
 faker
 pymongo
 matplotlib
+flet
