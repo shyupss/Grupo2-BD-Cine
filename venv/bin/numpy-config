@@ -1,4 +1,6 @@
-#!/home/ben/Escritorio/UACh/Progra/V/Grupo2-BD-Cine/venv/bin/python3
+#!/bin/sh
+'''exec' "/home/ben/Escritorio/UACh/Progra/V/Base de Datos/Grupo2-BD-Cine/venv/bin/python" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
