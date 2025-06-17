@@ -130,7 +130,7 @@ INSERT INTO pelicula (titulo, director, duracion, clasificacion_etaria, genero, 
 --- =======================================
 --- insertar salas (todas con 300 asientos)
 --- =======================================
-INSERT INTO sala (tipo, n_asientos) VALUES
+INSERT INTO sala (tipo, cant_asientos) VALUES
 ('NORMAL', 300),
 ('NORMAL', 300),
 ('IMAX', 300),
@@ -146,7 +146,7 @@ BEGIN
     FOR j IN 1..300 LOOP
       INSERT INTO asiento (num, id_sala)
       VALUES
-      	(j, i)
+      	(j, i);
     END LOOP;
   END LOOP;
 END $$;
@@ -206,3 +206,12 @@ BEGIN
   END LOOP;
 END;
 $$ LANGUAGE plpgsql;
+
+
+--- ========================================================
+
+--- contando q efectivamente se insertaron 10 funciones
+--- por película :)
+SELECT p.titulo, COUNT(*) FROM funcion f
+JOIN pelicula p ON f.id_pelicula = p.id
+GROUP BY p.id;
