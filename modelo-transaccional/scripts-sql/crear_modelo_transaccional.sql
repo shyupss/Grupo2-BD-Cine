@@ -159,5 +159,3 @@ CREATE TRIGGER trigger_verificar_conflicto_sala
 BEFORE INSERT OR UPDATE ON funcion
 FOR EACH ROW
 EXECUTE FUNCTION verificar_conflicto_sala();
-
-DROP TABLE cliente, pelicula, sala, asiento, boleto, funcion;
