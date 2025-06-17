@@ -1,18 +1,25 @@
---- este es el código de inserción q usamos para modelo estrella
---- adaptado al modelo de crear_modelo_transaccional.sql
+--- ================================
+--- INSERTAR EN MODELO TRANSACCIONAL
+--- ================================
 
---- RECORDAR IMPORTANTE!
---- antes de ejecutar vaciar base de datos
---- de tablas que tengan los mismos nombres
---- tener cuidado también con los seriales
---- los seriales mantienen el último valor incremental
---- aunque se haya vaciado la tabla
---- reactualizar los seriales para que vuelvan a 1
---- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+--- El sig. script hace inserciones en las
+--- tablas: cliente, pelicula, sala, asiento;
+--- para cada tabla por separado.
+--- Por último, para tablas: funcion, boleto;
+--- inserta para cada película diez funciones
+--- y para cada función, una cantidad aleatoria
+--- de boletos.
 
---- ==========================
---- inserción de 1500 clientes
---- ==========================
+--- Este es el código del modelo estrella
+--- adaptado para el modelo transaccional.
+
+--- Precaución!
+--- Antes de correr, revisar si ya se definieron las
+--- tablas como sale en crear_modelo_transaccional.sql
+--- y considerar si hubo conflictos entre tablas previas
+--- (si coinciden en nombre y conexión).
+
+--- #1: Inserción de 1500 clientes.
 DO $$
 BEGIN
   FOR i IN 1..1500 LOOP
@@ -25,10 +32,8 @@ BEGIN
   END LOOP;
 END $$;
 
---- =================================
---- inserción de 5 películas por mes
---- desde enero 2024 hasta abril 2025
---- =================================
+--- #2: Inserción de 5 películas por mes
+--- 		desde enero 2024 hasta abril 2025.
 INSERT INTO pelicula (titulo, director, duracion, clasificacion_etaria, genero, sinopsis) VALUES
 ---enero 2024
 ('WONKA', 'Paul King', '01:56:00', 'ATP', 'Fantasía', 'Un joven Willy Wonka conoce a los Oompa Loompas y sueña con una fábrica.'),
@@ -127,9 +132,8 @@ INSERT INTO pelicula (titulo, director, duracion, clasificacion_etaria, genero, 
 ('UNA PELÍCULA DE MINECRAFT', 'Jared Hess', '01:40:00', 'ATP', 'Aventura', 'Un niño debe salvar el mundo del Ender Dragon en el universo Minecraft.'),
 ('SMALL THINGS LIKE THESE', 'Tim Mielants', '01:43:00', '+13', 'Drama', 'Un hombre descubre secretos oscuros de un convento en la Irlanda de los 80.');
 
---- =======================================
---- insertar salas (todas con 300 asientos)
---- =======================================
+--- #3: Inserción de 5 salas, para cada una de
+---			ellas hay 300 asientos.
 INSERT INTO sala (tipo, cant_asientos) VALUES
 ('NORMAL', 300),
 ('NORMAL', 300),
@@ -137,9 +141,8 @@ INSERT INTO sala (tipo, cant_asientos) VALUES
 ('NORMAL', 300),
 ('3D', 300);
 
---- ==================================
---- insertar asientos para las 5 salas
---- ==================================
+--- #4: Inserción de asientos para cada una de
+---			las 5 salas. Son 300 para c/u.
 DO $$
 BEGIN
   FOR i IN 1..5 LOOP
@@ -151,15 +154,14 @@ BEGIN
   END LOOP;
 END $$;
 
---- ==========================================
---- Por cada película, 10 funciones,
---- cada función con una hora y sala
---- a partir de ahí, insertar boletos vendidos
---- ==========================================
+--- #5: Insertar 10 funciones para cada película.
+---			Y para cada función, insertar boletos
+---			vendidos (cantidad aleatoria).
 DO $$
 DECLARE
   sala_id INT;
-  fecha_proyeccion TIMESTAMP;
+  inicio_funcion TIMESTAMP;
+	fin_funcion TIMESTAMP;
   boletos_vendidos INT;
   asiento_num INT;
   precio_funcion INT;
@@ -167,27 +169,31 @@ DECLARE
   hora_pago TIMESTAMP;
   pelicula_id INT;
 	funcion_id INT;
+	duracion_pelicula TIME;
 BEGIN
   FOR x in 1..16 LOOP
   FOR i IN 1..5 LOOP
-    fecha_proyeccion := TIMESTAMP '2024-01-02 14:30:00' + ((x-1) * INTERVAL '1 month');
-    pelicula_id := i + 5 * (x-1);
+		pelicula_id := i + 5 * (x-1);
+		SELECT duracion INTO duracion_pelicula FROM pelicula WHERE id = pelicula_id;
+    inicio_funcion := TIMESTAMP '2024-01-02 14:30:00' + ((x-1) * INTERVAL '1 month');
+    fin_funcion := inicio_funcion + duracion_pelicula::text::interval;
     FOR j in 1..10 LOOP
         precio_funcion := FLOOR(RANDOM() * (5000-3000+1) + 3000);
-        sala_id := FLOOR(RANDOM() * 5 + 1);
+        sala_id := pelicula_id % 5 + 1;
         asiento_num := 1;
 				INSERT INTO 
-					funcion (id_sala, id_pelicula, hora_funcion)
+					funcion (id_sala, id_pelicula, hora_inicio, hora_fin)
 				VALUES (
 					sala_id,
 					pelicula_id,
-					fecha_proyeccion
+					inicio_funcion,
+					fin_funcion
 				)
 				RETURNING id INTO funcion_id;
         boletos_vendidos := FLOOR(RANDOM() * (300-50+1) + 50);
         FOR k in 1..boletos_vendidos LOOP
             cliente_id := FLOOR(RANDOM() * 1500 + 1);
-            hora_pago := fecha_proyeccion - (RANDOM() * INTERVAL '2 hours');
+            hora_pago := inicio_funcion - (RANDOM() * INTERVAL '2 hours');
             INSERT INTO 
             	boleto (id_cliente, id_funcion, num_asiento, precio, hora_compra)
             VALUES (
@@ -199,8 +205,8 @@ BEGIN
             );
             asiento_num := asiento_num + 1;
         END LOOP;
-        fecha_proyeccion := fecha_proyeccion::date + TIME '14:30:00';
-        fecha_proyeccion := fecha_proyeccion + INTERVAL '2 days' + (RANDOM() * INTERVAL '8 hours');
+        inicio_funcion := (inicio_funcion::date + INTERVAL '2 days') + TIME '14:30:00' + (RANDOM() * INTERVAL '8 hours');
+        fin_funcion := inicio_funcion + duracion_pelicula::text::interval;
     END LOOP;
   END LOOP;
   END LOOP;
@@ -215,3 +221,4 @@ $$ LANGUAGE plpgsql;
 SELECT p.titulo, COUNT(*) FROM funcion f
 JOIN pelicula p ON f.id_pelicula = p.id
 GROUP BY p.id;
+
