@@ -1,5 +1,8 @@
 from insertar_funcion import insertar_funcion
 from insertar_boleto import insertar_boleto
+from editar_boleto import editar_boleto
+from eliminar_boleto import eliminar_boleto
+
 import sys
 
 def menu():
@@ -7,8 +10,10 @@ def menu():
         print("\n=== MENÚ CINE ===")
         print("1. Insertar función")
         print("2. Insertar boleto")
-        print("3. Salir")
-        opcion = input("Seleccione una opción: ")
+        print("3. Editar boleto")
+        print("4. Eliminar boleto")
+        print("s. Salir")
+        opcion = input("Seleccione una opción: ").strip().lower()
 
         match opcion:
             case '1':
@@ -16,6 +21,10 @@ def menu():
             case '2':
                 insertar_boleto()
             case '3':
+                editar_boleto()
+            case '4':
+                eliminar_boleto()
+            case 's':
                 print("Saliendo del sistema.")
                 break
             case _:
