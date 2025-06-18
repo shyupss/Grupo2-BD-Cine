@@ -32,12 +32,12 @@ CREATE TABLE "pelicula" (
 CREATE TABLE "sala" (
   "id" serial PRIMARY KEY,
   "tipo" varchar,
-  "cant_asientos" int
+  "cant_asientos" int NOT NULL
 );
 
 CREATE TABLE "asiento" (
-  "num" integer,
-  "id_sala" integer,
+  "num" integer NOT NULL,
+  "id_sala" integer NOT NULL,
   PRIMARY KEY ("id_sala", "num"),
   FOREIGN KEY ("id_sala") REFERENCES "sala" ("id")
 );
@@ -45,8 +45,8 @@ CREATE TABLE "asiento" (
 
 CREATE TABLE "funcion" (
   "id" serial PRIMARY KEY,
-  "id_sala" integer,
-  "id_pelicula" integer,
+  "id_sala" integer NOT NULL,
+  "id_pelicula" integer NOT NULL,
   "hora_inicio" timestamp NOT NULL,
   "hora_fin" timestamp NOT NULL,
   FOREIGN KEY ("id_sala") REFERENCES "sala" ("id"),
@@ -55,13 +55,13 @@ CREATE TABLE "funcion" (
 
 CREATE TABLE "boleto" (
   "id" serial PRIMARY KEY,
-  "id_cliente" integer,
+  "id_cliente" integer NOT NULL,
   FOREIGN KEY ("id_cliente") REFERENCES "cliente" ("id"),
-  "id_funcion" integer,
+  "id_funcion" integer NOT NULL,
   FOREIGN KEY ("id_funcion") REFERENCES "funcion" ("id"),
   "num_asiento" integer NOT NULL,
   "precio" integer NOT NULL,
-  "hora_compra" timestamp
+  "hora_compra" timestamp NOT NULL
 );
 
 --- ==========================
