@@ -62,19 +62,22 @@ def insertar_boleto():
             print(f"[{f[0]}] '{f[1]}' en sala {f[4]} / inicia: {f[2]} termina: {f[3]}")
 
         # Desde input se ingresa ID función
-        id_funcion = int(input("\nIngrese el ID de la función: ").strip())
+        funcion_validada = False
+        while not funcion_validada:
+            id_funcion = int(input("\nIngrese el ID de la función: ").strip())
 
-        # Verificar que la función existe y está activa/disponible
-        cur.execute(
-            f"SELECT hora_fin FROM funcion WHERE id = {id_funcion}"
-        )
-        resultado = cur.fetchone()
-        if not resultado: # si no se halló función en db
-            print("Esta función no existe. Por favor, ingrese una función válida.")
-            return
-        if resultado[0] <= datetime.now(): # si se halló, pero ya terminó
-            print("Esta función ya terminó y no se pueden vender boletos.")
-            return
+            # Verificar que la función existe y está activa/disponible
+            cur.execute(
+                f"SELECT hora_fin FROM funcion WHERE id = {id_funcion}"
+            )
+            resultado = cur.fetchone()
+            if not resultado: # si no se halló función en db
+                print("Esta función no existe. Por favor, ingrese una función válida.")
+                continue
+            if resultado[0] <= datetime.now(): # si se halló, pero ya terminó
+                print("Esta función ya terminó y no se pueden vender boletos.")
+                continue
+            funcion_validada = True
 
         cur.execute(f"SELECT id_sala FROM funcion WHERE id = {id_funcion}")
         id_sala = cur.fetchone()[0] # almacena id de sala obtenida
