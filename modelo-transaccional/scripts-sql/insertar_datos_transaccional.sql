@@ -20,9 +20,15 @@
 --- (si coinciden en nombre y conexión).
 
 --- #1: Inserción de 1500 clientes.
+---			El primero es cliente por venta presencial.
 DO $$
 BEGIN
-  FOR i IN 1..1500 LOOP
+	INSERT INTO cliente (nombres, apellidos)
+	VALUES (
+		'Venta',
+		'Presencial'
+	);
+  FOR i IN 1..1499 LOOP
     INSERT INTO cliente (nombres, apellidos, edad)
     VALUES (
       'Nombre' || i,

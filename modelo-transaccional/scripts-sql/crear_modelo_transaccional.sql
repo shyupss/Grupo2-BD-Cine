@@ -23,7 +23,7 @@ CREATE TABLE "pelicula" (
   "id" serial PRIMARY KEY,
   "titulo" varchar NOT NULL,
   "director" varchar,
-  "duracion" time,
+  "duracion" time NOT NULL,
   "clasificacion_etaria" varchar,
   "genero" varchar,
   "sinopsis" varchar
