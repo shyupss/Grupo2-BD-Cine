@@ -81,6 +81,27 @@ def insertar_boleto():
 
         cur.execute(f"SELECT id_sala FROM funcion WHERE id = {id_funcion}")
         id_sala = cur.fetchone()[0] # almacena id de sala obtenida
+
+        # 5) Listar asientos libres
+        cur.execute("""
+            SELECT a.num
+                FROM asiento a
+            LEFT JOIN boleto b
+                ON b.id_funcion = %s
+                AND b.num_asiento = a.num
+                WHERE a.id_sala = (
+                    SELECT id_sala
+                    FROM funcion
+                    WHERE id = %s
+                )
+                AND b.id IS NULL
+        """, (id_funcion, id_funcion))
+        
+        asientosLibres = cur.fetchall()
+        for asiento in asientosLibres:
+            print(f"Asiento [{asiento[0]}]", end=" _ ")
+
+        print("\n")
         cur.execute(f"SELECT cant_asientos FROM sala WHERE id = {id_sala}")
         cant_asientos = cur.fetchone()[0] # almacena el último número de asiento
 
