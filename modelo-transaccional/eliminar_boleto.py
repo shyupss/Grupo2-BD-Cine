@@ -1,33 +1,44 @@
 import psycopg2
-from datetime import datetime, timedelta
 from conectar import conectar
 
 def eliminar_boleto() -> None:
-
-    # Declaro conexión
+    """
+    Permite eliminar un boleto existente después de confirmación.
+    """
     conn = conectar()
     cur = conn.cursor()
 
     try:
-
-        idBoleto = int(input("Código identificador del boleto que desea eliminar: ").strip())
-        
-        #Se recupera el boleto con la ID consultada
-        cur.execute(f'''
-            SELECT *
-            FROM boleto
-            WHERE id = '{idBoleto}'
-        ''')
-
-        # Se recupera la existencia
-        existenciaBoleto = cur.fetchall()
-        
-        # Si no existe, se retorna (no se puede eliminar)
-        if existenciaBoleto is None:
-            print("No se puede editar un boleto que no está registrado...")
+        #id y verificar existencia
+        id_boleto = int(input("Código identificador del boleto que desea eliminar: ").strip())
+        cur.execute(
+            "SELECT id, id_funcion, num_asiento FROM boleto WHERE id = %s",
+            (id_boleto,)
+        )
+        boleto = cur.fetchone()
+        if not boleto:
+            print(f"No existe ningún boleto con ID {id_boleto}.")
             return
-        # De lo contrario, eliminamos secuencialmente en la base de datos
-        
 
-    except Exception:
-        ...
+        # mostrar datos y pedir confirmación
+        print(f"Boleto encontrado → ID: {boleto[0]}, Función: {boleto[1]}, Asiento: {boleto[2]}")
+        confirm = input("¿Seguro que desea eliminar este boleto? (s/n): ").strip().lower()
+        if confirm != 's':
+            print("Operación cancelada.")
+            return
+
+        # ejecutar DELETE y confirmar
+        cur.execute(
+            "DELETE FROM boleto WHERE id = %s",
+            (id_boleto,)
+        )
+        conn.commit()
+        print(f"Boleto {id_boleto} eliminado correctamente.")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Error al eliminar el boleto: {e}")
+
+    finally:
+        cur.close()
+        conn.close()
