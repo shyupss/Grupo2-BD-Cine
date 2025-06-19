@@ -2,9 +2,9 @@ import psycopg2
 from datetime import datetime, timedelta
 from conectar import conectar
 
-def editarFuncion(idBoleto: str, idCliente: int, idFuncion: int, numAsiento: int, precio: int, cur, conn) -> None:
+def editarFuncion(cur, conn, idBoleto) -> None:
 
-    # Mostrar películas disponibles
+    # mostrar peliculas
     print("\nPelículas disponibles:")
     cur.execute('''
         SELECT id, titulo, genero, director, duracion
@@ -12,63 +12,123 @@ def editarFuncion(idBoleto: str, idCliente: int, idFuncion: int, numAsiento: int
         ORDER BY id
     ''')
     peliculas = cur.fetchall()
-
-    # Enlistando en ciclo for each
     for idPeli, nombrePeli, genero, directorPeli, duracionPeli in peliculas:
         print(f"[ID: {idPeli}] - {nombrePeli} | Género: {genero} | Director: {directorPeli} | Duración: {duracionPeli}")
 
-    # Elegir pelicula
+    # seleccion pelicula
     eleccionPelicula = int(input("\nIndique el ID de la pelicula: "))
-
-    # Elegir la funcion para esta pelicula
-    # Listamos las funciones disponibles para esta pelicula (ignorando la antigua)
     cur.execute('''
-        SELECT id, hora_inicio, hora_fin
-        FROM funcion
-        WHERE id_pelicula = %s
-        AND id <> %s
-    ''', (eleccionPelicula, idFuncion))
+        SELECT *
+        FROM pelicula
+        WHERE id = %s
+    ''', (eleccionPelicula, ))
+    row = cur.fetchone()
+    if not row:
+        print("No existe ninguna pelicula con ese ID.")
+        conn.rollback()
+        return
 
-    funcionesDisponibles = cur.fetchall()
+    # mostrar funciones
+    print("\nFunciones disponibles:")
+    cur.execute(
+        '''
+        SELECT f.id, f.hora_inicio, f.hora_fin, f.id_sala
+        FROM funcion f
+        WHERE f.hora_fin > NOW() AND f.id_pelicula = %s
+        ''',
+        (eleccionPelicula,)
+    )
+    funciones = cur.fetchall()
 
-    # Mostramos las funciones
-    for id_funcc, hora_ini, hora_fin in funcionesDisponibles:
-        print(f"[ID: {id_funcc}] - Hora Inicio: {hora_ini} - Hora Fin: {hora_fin}")
+    if not funciones:
+        print("No hay funciones disponibles para esta película en este momento.")
+        return
+    for func in funciones:
+        idF, inicio, fin, sala = func
+        print(f"[ID: {idF}] Inicia: {inicio} | Termina: {fin} | Sala: {sala}")
+    
+    # validando funcion a seleccionar
+    funcion_validada = False
+    while not funcion_validada:
+        id_funcion = int(input("\nIngrese el ID de la función: ").strip())
 
-    eleccionFuncion = int(input("Indique la funcion nueva que desea reservar: "))
+        # Verificar que la función existe y está activa/disponible
+        cur.execute(
+            f"SELECT hora_fin FROM funcion WHERE id = {id_funcion}"
+        )
+        resultado = cur.fetchone()
+        if not resultado: # si no se halló función en db
+            print("Esta función no existe. Por favor, ingrese una función válida.")
+            continue
+        if resultado[0] <= datetime.now(): # si se halló, pero ya terminó
+            print("Esta función ya terminó y no se pueden vender boletos.")
+            continue
+        funcion_validada = True
 
-    # 5) Listar asientos libres
-    cur.execute("""
+    # obtener datos de la sala de la funcion
+    cur.execute(f"SELECT id_sala FROM funcion WHERE id = {id_funcion}")
+    id_sala = cur.fetchone()[0] # id de sala obtenida
+    cur.execute(f"SELECT cant_asientos FROM sala WHERE id = {id_sala}")
+    cant_asientos = cur.fetchone()[0] # último número de asiento
+
+    # --- Mostrar & Validar asiento ---
+
+    # mostrar asientos
+    cur.execute(
+        '''
         SELECT a.num
-            FROM asiento a
-        LEFT JOIN boleto b
-            ON b.id_funcion = %s
-            AND b.num_asiento = a.num
-            WHERE a.id_sala = (
-                SELECT id_sala
-                FROM funcion
-                WHERE id = %s
-            )
-            AND b.id IS NULL
-    """, (eleccionFuncion, eleccionFuncion))
-    
-    asientosLibres = cur.fetchall()
-    for asiento in asientosLibres:
-        print(f"Asiento [{asiento[0]}]", end=" _ ")
+        FROM asiento a
+        LEFT JOIN boleto b ON b.id_funcion = %s AND a.num = b.num_asiento
+        WHERE a.id_sala = %s AND b.id IS NULL
+        ORDER BY a.num
+        ''',
+        (id_funcion, id_sala)
+    )
+    disponibles = [row[0] for row in cur.fetchall()]
+    print(f"\nAsientos disponibles para la función {id_funcion} (Sala {id_sala}):\n{disponibles}\n")
 
-    print("\n")
-    numAsientoNuevo = input("Seleccione el asiento: ")
+    # validando asiento a seleccionar
+    asiento_validado = False
+    while not asiento_validado:
+        # Desde input se ingresa num. asiento
+        num_asiento = int(input("Ingrese el número de asiento: ").strip())
 
-    # Se actualiza la funcion...
-    cur.execute("""
+        # Verificar que el asiento existe en la sala correspondiente
+        cur.execute(
+            f"SELECT 1 FROM asiento WHERE id_sala = {id_sala} AND num = {num_asiento}")
+        if not cur.fetchone():
+            print(f"El asiento {num_asiento} no existe en la sala {id_sala} de la función {id_funcion}.")
+            print(f"La sala {id_sala} tiene asientos enumerados: desde 1 hasta {cant_asientos}.")
+            print(f"Por favor, ingrese un asiento válido.")
+            continue
+
+        # Verificar que el asiento esté disponible para la venta del boleto
+        cur.execute(
+            f"SELECT 1 FROM boleto WHERE id_funcion = {id_funcion} AND num_asiento = {num_asiento}"
+        )
+        if cur.fetchone():
+            print(f"El asiento {num_asiento} ya está ocupado para la función {id_funcion}.")
+            print(f"Por favor, ingrese un asiento disponible.")
+            continue
+
+        asiento_validado = True
+
+    # actualizar el boleto con la nueva funcion y asiento
+    try:
+        cur.execute(
+            '''
             UPDATE boleto
-               SET id_funcion  = %s,
-                   num_asiento = %s
-             WHERE id = %s
-        """, (eleccionFuncion, numAsientoNuevo, idBoleto))
-    
-    conn.commit()
-    print("Boleto actualizado exitosamente...")
+            SET id_funcion = %s,
+                num_asiento = %s
+            WHERE id = %s
+            ''',
+            (id_funcion, num_asiento, idBoleto)
+        )
+        conn.commit()
+        print(f"Boleto {idBoleto} actualizado: función {id_funcion}, asiento {num_asiento}.")
+    except Exception as e:
+        conn.rollback()
+        print(f"No se pudo actualizar el boleto: {e}")
 
 def editarNumeroAsiento(existenciaBoleto: int) -> None:
     ...
@@ -107,9 +167,7 @@ def editar_boleto():
 
         match opcion:
             case '1':
-                editarFuncion(existenciaBoleto[0][0], existenciaBoleto[0][1], 
-                              existenciaBoleto[0][2], existenciaBoleto[0][3], 
-                              existenciaBoleto[0][4], cur, conn)
+                editarFuncion(cur, conn, existenciaBoleto[0][0])
             case '2':
                 editarNumeroAsiento(existenciaBoleto)
             case 's':
