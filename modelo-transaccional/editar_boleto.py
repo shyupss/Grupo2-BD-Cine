@@ -157,15 +157,48 @@ def editarNumeroAsiento(existenciaBoleto: int) -> None:
         # Obtiene el número de asiento actual del boleto
         cur.execute(
             '''
-            SELECT num_asiento
+            SELECT num_asiento, id_funcion
             FROM boleto
             WHERE id = %s
             ''',
             (existenciaBoleto[0][0],)
         )
-        num_asiento_actual = cur.fetchone()[0]
+        resultado = cur.fetchone()
+        num_asiento_actual = resultado[0]
+        id_funcion = resultado[1]
+
         print(f"El número de asiento actual es: {num_asiento_actual}")
 
+        # Obtener sala desde la función
+        cur.execute(
+            '''
+            SELECT id_sala
+            FROM funcion
+            WHERE id = %s
+            ''',
+            (id_funcion,)
+        )
+        id_sala = cur.fetchone()[0]
+
+        # Mostrar asientos disponibles
+        cur.execute(
+            '''
+            SELECT a.num
+            FROM asiento a
+            LEFT JOIN boleto b ON b.id_funcion = %s AND a.num = b.num_asiento
+            WHERE a.id_sala = %s AND b.id IS NULL
+            ORDER BY a.num
+            ''',
+            (id_funcion, id_sala)
+        )
+        disponibles = [row[0] for row in cur.fetchall()]
+
+        print(f"\nAsientos disponibles para la función {id_funcion} (Sala {id_sala}):\n")
+        for asiento in disponibles:
+            print(f"Asiento [{asiento}]", end=" _ ")
+        print()  # salto de línea final
+
+        # Solicita el nuevo número de asiento
         nuevo_num_asiento = int(input("Ingrese el nuevo número de asiento: ").strip())
 
         # Verifica que el nuevo asiento no esté ocupado
@@ -174,11 +207,12 @@ def editarNumeroAsiento(existenciaBoleto: int) -> None:
             SELECT 1 FROM boleto
             WHERE num_asiento = %s AND id_funcion = %s
             ''',
-            (nuevo_num_asiento, existenciaBoleto[0][1])
+            (nuevo_num_asiento, id_funcion)
         )
         if cur.fetchone():
-            print(f"El asiento {nuevo_num_asiento} ya está ocupado para la función {existenciaBoleto[0][1]}.")
+            print(f"El asiento {nuevo_num_asiento} ya está ocupado para la función {id_funcion}.")
             return
+
 
         # Actualiza el número de asiento
         cur.execute(
@@ -190,7 +224,7 @@ def editarNumeroAsiento(existenciaBoleto: int) -> None:
             (nuevo_num_asiento, existenciaBoleto[0][0])
         )
         conn.commit()
-        print(f"Número de asiento actualizado a {nuevo_num_asiento} para el boleto ID {existenciaBoleto[0][0]}.")
+        print(f"Número de asiento {num_asiento_actual} ha sido actualizado a {nuevo_num_asiento} para el boleto ID {existenciaBoleto[0][0]}.")
 
     except Exception as e:
         conn.rollback()
