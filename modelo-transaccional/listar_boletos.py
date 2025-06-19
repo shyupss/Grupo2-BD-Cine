@@ -7,12 +7,11 @@ def listar_boletos():
     cur = conn.cursor()
 
     try:
-        print("\nListar boletos vendidos en...")
-        print("1. Últimos 7 días")
-        print("2. Este mes")
-        print("3. Este año")
-        print("4. Todos")
-        opcion = input("Seleccione una opción (1–4): ").strip()
+        print("\nListar boletos vendidos...")
+        print("1. En los últimos 7 días")
+        print("2. En un mes y año específicos")
+        print("3. Para una función específica")
+        opcion = input("Seleccione una opción (1–3): ").strip()
 
         consulta_base = '''
             SELECT b.id, c.nombres, c.apellidos, p.titulo, s.id AS sala,
@@ -30,20 +29,101 @@ def listar_boletos():
             print("\nBoletos vendidos en los últimos 7 días:\n")
 
         elif opcion == "2":
-            hoy = datetime.now()
-            desde = hoy.replace(day=1, hour=0, minute=0, second=0, microsecond=0) # cambia la fecha de búsqueda al primer día del mes
-            cur.execute(consulta_base + f" WHERE b.hora_compra >= '{desde}' ORDER BY b.hora_compra DESC")
-            print("\nBoletos vendidos en este mes:\n")
+            fecha_validada = False
+            while not fecha_validada:
+                try:
+                    anio = int(input("Ingrese el año: ").strip())
+                    mes = int(input("Ingrese el número del mes (1–12): ").strip())
+                    if mes < 1 or mes > 12:
+                        print("Mes inválido. Debe ser entre 1 y 12.")
+                        continue
+
+                    desde = datetime(anio, mes, 1) # desde el primer día del mes ingresado, del año ingresado
+                    # Calcular el primer día del mes siguiente
+                    if mes == 12:
+                        hasta = datetime(anio + 1, 1, 1)
+                    else:
+                        hasta = datetime(anio, mes + 1, 1)
+                    # hasta el primer día del mes siguiente
+
+                    cur.execute(consulta_base + f'''
+                        WHERE b.hora_compra >= '{desde}' AND b.hora_compra < '{hasta}'
+                        ORDER BY b.hora_compra DESC
+                    ''')
+                    print(f"\nBoletos vendidos en {desde.strftime('%B %Y')}:\n") # convertir mes y año en string
+                    fecha_validada = True
+
+                except ValueError:
+                    print("Entrada inválida. Debe ingresar números válidos para año y mes.")
+                    continue
 
         elif opcion == "3":
-            hoy = datetime.now()
-            desde = hoy.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0) # fecha de búsqueda al 01 de enero
-            cur.execute(consulta_base + f" WHERE b.hora_compra >= '{desde}' ORDER BY b.hora_compra DESC")
-            print("\nBoletos vendidos en el último año:\n")
+            fecha_validada = False
+            while not fecha_validada:
+                try:
+                    anio = int(input("Ingrese el año de la función: ").strip())
+                    mes = int(input("Ingrese el mes de la función (1–12): ").strip())
+                    if mes < 1 or mes > 12:
+                        print("Mes inválido. Debe ser entre 1 y 12.")
+                        continue
 
-        elif opcion == "4":
-            cur.execute(consulta_base + " ORDER BY b.hora_compra DESC")
-            print("\nTodos los boletos vendidos:\n")
+                    desde = datetime(anio, mes, 1)
+                    if mes == 12:
+                        hasta = datetime(anio + 1, 1, 1)
+                    else:
+                        hasta = datetime(anio, mes + 1, 1)
+
+                    # Listar todas las funciones cuya hora_inicio esté en el rango
+                    # de tiempo dispuesto por el usuario.
+                    cur.execute(f'''
+                        SELECT f.id, p.titulo, s.id AS sala, f.hora_inicio, f.hora_fin
+                        FROM funcion f
+                        JOIN pelicula p ON f.id_pelicula = p.id
+                        JOIN sala s ON f.id_sala = s.id
+                        WHERE f.hora_inicio >= '{desde}' AND f.hora_inicio < '{hasta}'
+                        ORDER BY f.hora_inicio
+                    ''')
+                    funciones = cur.fetchall()
+
+                    # Si no se halló función alguna en dicho rango de tiempo:
+                    if not funciones:
+                        print(f"No se encontraron funciones en {desde.strftime('%B %Y')}.")
+                        continue
+
+                    # En cambio, si se halló, entonces las enlisto :)
+                    print(f"\nFunciones en {desde.strftime('%B %Y')}:")
+                    for f in funciones:
+                        print(f"[{f[0]}] '{f[1]}' | Sala {f[2]} | {f[3]} hasta {f[4]}")
+
+                    fecha_validada = True
+
+                except ValueError:
+                    print("Entrada inválida. Debe ingresar números válidos para año y mes.")
+                    continue
+
+            # Ahora, consultar la función para la que quiere ver los boletos vendidos
+            funcion_validada = False
+            while not funcion_validada:
+                try:
+                    # Preguntarle al usuario de qué funcion quiere listar los boletos
+                    id_funcion = int(input("\nIngrese el ID de la función para ver sus boletos vendidos: ").strip())
+
+                    ids_funciones = [f[0] for f in funciones]
+                    if id_funcion not in ids_funciones:
+                        print("ID de función rechazado.")
+                        print("Asegúrese de que sea el ID de una función en el mes y año ingresados.")
+                        continue
+
+                    cur.execute(consulta_base + f'''
+                        WHERE b.id_funcion = {id_funcion}
+                        ORDER BY b.hora_compra DESC
+                    ''')
+
+                    funcion_validada = True
+
+                except ValueError:
+                    print("Entrada inválida. Debe ingresar números válidos para ID.")
+                    continue
 
         else:
             print("Opción inválida.")
