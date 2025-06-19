@@ -228,3 +228,43 @@ SELECT p.titulo, COUNT(*) FROM funcion f
 JOIN pelicula p ON f.id_pelicula = p.id
 GROUP BY p.id;
 
+--- =========================================================
+
+--- insertar nuevas películas
+
+INSERT INTO pelicula (titulo, director, duracion, clasificacion_etaria, genero, sinopsis) VALUES
+('DESTINO FINAL: LAZOS DE SANGRE', 'Zach Lipovsky', '1:50:00', '+16', 'Terror', 'Reimaginación de la saga “Destino Final”: un grupo de personas intenta evadir una muerte inminente tras tener premoniciones fatales.'),
+('LILO & STITCH', 'Dean Fleischer‑Camp', '1:45:00', 'ATP', 'Familiar', 'Adaptación en imagen real de la película animada: Lilo y su querido experimento alienígena Stitch viven nuevas aventuras.'),
+('MISIÓN IMPOSIBLE: SENTENCIA FINAL', 'Christopher McQuarrie', '2:15:00', '+13', 'Acción', 'Ethan Hunt y su equipo enfrentan su misión más peligrosa en un tramo final al filo del desastre global.'),
+('28 YEARS LATER', 'Danny Boyle', '1:50:00', '+16', 'Terror', 'Secuela del clásico: tras 28 años, un nuevo brote zombi pone en peligro a los supervivientes.'),
+('CÓMO ENTRENAR A TU DRAGÓN', 'Dean DeBlois', '2:05:00', 'ATP', 'Fantasía', 'Una adaptación live‑action: un joven vikingo se hace amigo de un dragón, rompiendo tradiciones.');
+
+--- insertar funciones para estas películas
+
+INSERT INTO funcion (id_sala, id_pelicula, hora_inicio, hora_fin)
+VALUES
+-- DESTINO FINAL (duración: 1:50)
+(1, 1, '2025-06-20 16:00:00', '2025-06-20 17:50:00'),
+(1, 1, '2025-06-21 16:00:00', '2025-06-21 17:50:00'),
+(1, 1, '2025-06-22 16:00:00', '2025-06-22 17:50:00'),
+
+-- LILO & STITCH (duración: 1:45)
+(2, 2, '2025-06-20 16:00:00', '2025-06-20 17:45:00'),
+(2, 2, '2025-06-21 16:00:00', '2025-06-21 17:45:00'),
+(2, 2, '2025-06-22 16:00:00', '2025-06-22 17:45:00'),
+
+-- MISIÓN IMPOSIBLE (duración: 2:15)
+(3, 3, '2025-06-20 16:00:00', '2025-06-20 18:15:00'),
+(3, 3, '2025-06-21 16:00:00', '2025-06-21 18:15:00'),
+(3, 3, '2025-06-22 16:00:00', '2025-06-22 18:15:00'),
+
+-- 28 YEARS LATER (duración: 1:50)
+(4, 4, '2025-06-20 16:00:00', '2025-06-20 17:50:00'),
+(4, 4, '2025-06-21 16:00:00', '2025-06-21 17:50:00'),
+(4, 4, '2025-06-22 16:00:00', '2025-06-22 17:50:00'),
+
+-- CÓMO ENTRENAR A TU DRAGÓN (duración: 2:05)
+(5, 5, '2025-06-20 16:00:00', '2025-06-20 18:05:00'),
+(5, 5, '2025-06-21 16:00:00', '2025-06-21 18:05:00'),
+(5, 5, '2025-06-22 16:00:00', '2025-06-22 18:05:00');
+

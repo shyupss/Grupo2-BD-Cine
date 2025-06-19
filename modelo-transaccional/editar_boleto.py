@@ -4,41 +4,15 @@ from conectar import conectar
 
 def editarFuncion(cur, conn, idBoleto, idFuncion) -> None:
 
-    # mostrar peliculas
-    print("\nPelículas disponibles:")
-    cur.execute('''
-        SELECT id, titulo, genero, director, duracion
-        FROM pelicula
-        ORDER BY id
-    ''')
-    peliculas = cur.fetchall()
-    for idPeli, nombrePeli, genero, directorPeli, duracionPeli in peliculas:
-        print(f"[ID: {idPeli}] - {nombrePeli} | Género: {genero} | Director: {directorPeli} | Duración: {duracionPeli}")
-
-    # seleccion pelicula
-    eleccionPelicula = int(input("\nIndique el ID de la pelicula: "))
-    cur.execute('''
-        SELECT *
-        FROM pelicula
-        WHERE id = %s
-    ''', (eleccionPelicula, ))
-    row = cur.fetchone()
-    if not row:
-        print("No existe ninguna pelicula con ese ID.")
-        conn.rollback()
-        return
-
     # mostrar funciones
-    fechaPrueba = datetime(2025, 4, 1, 0, 0)
-
     print("\nFunciones disponibles:")
     cur.execute(
         '''
         SELECT f.id, f.hora_inicio, f.hora_fin, f.id_sala
         FROM funcion f
-        WHERE f.hora_fin > %s AND f.id_pelicula = %s AND id <> %s
+        WHERE f.hora_fin > NOW() AND id <> %s
         ''',
-        (fechaPrueba, eleccionPelicula, idFuncion)
+        (idFuncion, )
     )
     funciones = cur.fetchall()
 
@@ -57,7 +31,7 @@ def editarFuncion(cur, conn, idBoleto, idFuncion) -> None:
     #print("TODAS LAS FUNCIONES (sin filtro):", cur.fetchall())
     
     if not funciones:
-        print("No hay funciones disponibles para esta película en este momento.")
+        print("No hay funciones disponibles para escoger. El boleto no ha sido editado.")
         return
     for func in funciones:
         idF, inicio, fin, sala = func
@@ -76,7 +50,7 @@ def editarFuncion(cur, conn, idBoleto, idFuncion) -> None:
         if not resultado: # si no se halló función en db
             print("Esta función no existe. Por favor, ingrese una función válida.")
             continue
-        if resultado[0] <= fechaPrueba:#datetime.now(): # si se halló, pero ya terminó
+        if resultado[0] <= datetime.now(): # si se halló, pero ya terminó
             print("Esta función ya terminó y no se pueden vender boletos.")
             continue
         funcion_validada = True
