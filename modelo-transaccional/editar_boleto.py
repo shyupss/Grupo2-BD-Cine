@@ -147,7 +147,57 @@ def editarFuncion(cur, conn, idBoleto, idFuncion) -> None:
         print(f"No se pudo actualizar el boleto: {e}")
 
 def editarNumeroAsiento(existenciaBoleto: int) -> None:
-    ...
+    """
+    Edita el número de asiento de un boleto existente.
+    """
+    conn = conectar()
+    cur = conn.cursor()
+
+    try:
+        # Obtiene el número de asiento actual del boleto
+        cur.execute(
+            '''
+            SELECT num_asiento
+            FROM boleto
+            WHERE id = %s
+            ''',
+            (existenciaBoleto[0][0],)
+        )
+        num_asiento_actual = cur.fetchone()[0]
+        print(f"El número de asiento actual es: {num_asiento_actual}")
+
+        nuevo_num_asiento = int(input("Ingrese el nuevo número de asiento: ").strip())
+
+        # Verifica que el nuevo asiento no esté ocupado
+        cur.execute(
+            '''
+            SELECT 1 FROM boleto
+            WHERE num_asiento = %s AND id_funcion = %s
+            ''',
+            (nuevo_num_asiento, existenciaBoleto[0][1])
+        )
+        if cur.fetchone():
+            print(f"El asiento {nuevo_num_asiento} ya está ocupado para la función {existenciaBoleto[0][1]}.")
+            return
+
+        # Actualiza el número de asiento
+        cur.execute(
+            '''
+            UPDATE boleto
+            SET num_asiento = %s
+            WHERE id = %s
+            ''',
+            (nuevo_num_asiento, existenciaBoleto[0][0])
+        )
+        conn.commit()
+        print(f"Número de asiento actualizado a {nuevo_num_asiento} para el boleto ID {existenciaBoleto[0][0]}.")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"No se pudo actualizar el número de asiento: {e}")
+    finally:
+        cur.close()
+        conn.close()
 
 def editar_boleto():
 
