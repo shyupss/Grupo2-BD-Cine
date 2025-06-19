@@ -2,7 +2,7 @@ import psycopg2
 from datetime import datetime, timedelta
 from conectar import conectar
 
-def editarFuncion(cur, conn, idBoleto) -> None:
+def editarFuncion(cur, conn, idBoleto, idFuncion) -> None:
 
     # mostrar peliculas
     print("\nPelículas disponibles:")
@@ -29,17 +29,33 @@ def editarFuncion(cur, conn, idBoleto) -> None:
         return
 
     # mostrar funciones
+    fechaPrueba = datetime(2025, 4, 1, 0, 0)
+
     print("\nFunciones disponibles:")
     cur.execute(
         '''
         SELECT f.id, f.hora_inicio, f.hora_fin, f.id_sala
         FROM funcion f
-        WHERE f.hora_fin > NOW() AND f.id_pelicula = %s
+        WHERE f.hora_fin > %s AND f.id_pelicula = %s AND id <> %s
         ''',
-        (eleccionPelicula,)
+        (fechaPrueba, eleccionPelicula, idFuncion)
     )
     funciones = cur.fetchall()
 
+    # DEBUG: ver NOW() y las funciones sin filtrar
+    #cur.execute("SELECT NOW()")
+    #print("AHORA:", cur.fetchone()[0])
+    #cur.execute(
+    #    '''
+    #    SELECT id, hora_inicio, hora_fin
+    #    FROM funcion
+    #    WHERE id_pelicula = %s
+    #    ORDER BY hora_inicio
+    #    ''',
+    #    (eleccionPelicula,)
+    #)
+    #print("TODAS LAS FUNCIONES (sin filtro):", cur.fetchall())
+    
     if not funciones:
         print("No hay funciones disponibles para esta película en este momento.")
         return
@@ -60,7 +76,7 @@ def editarFuncion(cur, conn, idBoleto) -> None:
         if not resultado: # si no se halló función en db
             print("Esta función no existe. Por favor, ingrese una función válida.")
             continue
-        if resultado[0] <= datetime.now(): # si se halló, pero ya terminó
+        if resultado[0] <= fechaPrueba:#datetime.now(): # si se halló, pero ya terminó
             print("Esta función ya terminó y no se pueden vender boletos.")
             continue
         funcion_validada = True
@@ -217,7 +233,7 @@ def editar_boleto():
 
         match opcion:
             case '1':
-                editarFuncion(cur, conn, existenciaBoleto[0][0])
+                editarFuncion(cur, conn, existenciaBoleto[0][0], existenciaBoleto[0][2])
             case '2':
                 editarNumeroAsiento(existenciaBoleto)
             case 's':
