@@ -119,9 +119,11 @@ def insertar_boleto():
         cur.execute(f'''
             INSERT INTO boleto (id_cliente, id_funcion, num_asiento, precio, hora_compra)
             VALUES ({id_cliente}, {id_funcion}, {num_asiento}, {precio}, '{hora_compra}')
+            RETURNING id
         ''')
+        id_boleto = cur.fetchone()
         conn.commit()
-        print("Boleto vendido e insertado exitosamente.")
+        print(f"Boleto vendido e insertado exitosamente con el ID {id_boleto}")
 
     except psycopg2.Error as error_postgres:
         conn.rollback()
