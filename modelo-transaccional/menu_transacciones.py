@@ -2,6 +2,8 @@ from insertar_funcion import insertar_funcion
 from insertar_boleto import insertar_boleto
 from editar_boleto import editar_boleto
 from eliminar_boleto import eliminar_boleto
+from listar_boletos import listar_boletos
+from listar_funciones import listar_funciones
 
 import sys
 
@@ -13,9 +15,9 @@ def menu():
         print("3. Editar boleto")
         print("4. Eliminar boleto")
         print("5. Listar boletos vendidos")
-        print("5. Listar funciones")
-        print("6. Editar función")
-        print("7. Eliminar una próxima función")
+        print("6. Listar funciones")
+        print("7. Editar función")
+        print("8. Eliminar una próxima función")
         print("s. Salir")
         opcion = input("Seleccione una opción: ").strip().lower()
 
@@ -28,6 +30,10 @@ def menu():
                 editar_boleto()
             case '4':
                 eliminar_boleto()
+            case '5':
+                listar_boletos()
+            case '6':
+                listar_funciones()
             case 's':
                 print("Saliendo del sistema.")
                 break
