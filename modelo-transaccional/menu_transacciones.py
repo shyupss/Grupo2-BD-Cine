@@ -16,8 +16,6 @@ def menu():
         print("4. Eliminar boleto")
         print("5. Listar boletos vendidos")
         print("6. Listar funciones")
-        print("7. Editar función")
-        print("8. Eliminar una próxima función")
         print("s. Salir")
         opcion = input("Seleccione una opción: ").strip().lower()
 
