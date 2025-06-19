@@ -123,7 +123,7 @@ def insertar_boleto():
         ''')
         id_boleto = cur.fetchone()
         conn.commit()
-        print(f"Boleto vendido e insertado exitosamente con el ID {id_boleto}")
+        print(f"Boleto vendido e insertado exitosamente con el ID: {id_boleto[0]}")
 
     except psycopg2.Error as error_postgres:
         conn.rollback()
