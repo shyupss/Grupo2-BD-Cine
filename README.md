@@ -37,8 +37,6 @@ El sistema permitirá responder preguntas relevantes para el negocio, tales como
 - Popularidad de películas según su género, duración y clasificación etaria.
 - Análisis de comportamiento del público: segmentación por edad, frecuencia de asistencia y preferencias de género cinematográfico.
 
----
-
 ## Requerimientos/Necesidades del sistema (Instalar)
 
 Para instalar los requerimientos del proyecto, necesitas crear un entorno virtual luego de clonar el repositorio, esto se hace con los siguientes comandos (ejecutar en directorio raíz del proyecto):
@@ -67,6 +65,31 @@ Notar que luego de hacer este proceso, en VSCode deberías seleccionar como inte
 Con esto, el entorno virtual debería estar cargado y funcionando correctamente dentro de tu pc localmente.
 
 Por supuesto, aquí tienes la explicación completa en formato markdown, sin emojis, lista para que la copies y pegues en tu README:
+
+---
+
+## Instrucciones de Uso del Sistema Transaccional
+
+**Requisito**: utilizar un entorno virtual venv con la librería `psycopg2` (como se indicó previamente).
+El script `crear_db.py` crea una nueva base de datos `cine_db_transaccional` en la conexión del usuario `postgres`.
+Allí se alojan las tablas del sistema transaccional y, por lo tanto, también los datos de las transacciones manejadas desde `menu_transacciones.py`.
+En el caso de que aún no se haya inicializado la base de datos `cine_db_transaccional`, es necesario ejecutar el script `crear_db.py`:
+
+````markdown
+```bash
+python crear_db.py
+````
+
+Una vez inicializada la base de datos, ya se puede ejecutar `menu_transacciones.py`.
+
+````markdown
+```bash
+python menu_transacciones.py
+````
+
+
+---
+
 
 ## Instrucciones de Uso del Análisis de Datos (`analisis.py`)
 
