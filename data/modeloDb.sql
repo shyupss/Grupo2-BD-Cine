@@ -1,12 +1,15 @@
 CREATE TABLE "hechos_boletos" (
   "id" serial PRIMARY KEY,
-  "id_asiento" integer,
+  "num_asiento" integer,
   "id_pelicula" integer,
   "id_sala" integer,
   "id_cliente" integer,
-  "hora_funcion" timestamp,
+  "hora_inicio_funcion" timestamp,
+  "hora_fin_funcion" timestamp,
   "hora_compra" timestamp,
-  "precio" integer
+  "precio" integer,
+  "genero" varchar,
+  "clasificacion_etaria" varchar
 );
 
 CREATE TABLE "cliente" (
@@ -16,15 +19,10 @@ CREATE TABLE "cliente" (
   "edad" integer
 );
 
-CREATE TABLE "asiento" (
-  "id" serial PRIMARY KEY,
-  "disponible" boolean
-);
-
 CREATE TABLE "sala" (
   "id" serial PRIMARY KEY,
   "tipo" varchar,
-  "n_asientos" integer
+  "cant_asientos" integer
 );
 
 CREATE TABLE "pelicula" (
@@ -32,14 +30,10 @@ CREATE TABLE "pelicula" (
   "titulo" varchar,
   "director" varchar,
   "duracion" time,
-  "clasificacion_etaria" varchar,
-  "genero" varchar,
   "sinopsis" text
 );
 
 ALTER TABLE "hechos_boletos" ADD FOREIGN KEY ("id_cliente") REFERENCES "cliente" ("id");
-
-ALTER TABLE "hechos_boletos" ADD FOREIGN KEY ("id_asiento") REFERENCES "asiento" ("id");
 
 ALTER TABLE "hechos_boletos" ADD FOREIGN KEY ("id_sala") REFERENCES "sala" ("id");
 

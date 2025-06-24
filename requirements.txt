@@ -5,3 +5,4 @@ faker
 pymongo
 matplotlib
 flet
+schedule
