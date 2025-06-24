@@ -20,7 +20,7 @@
 --- (si coinciden en nombre y conexión).
 
 --- #1: Inserción de 1500 clientes.
----			El primero es cliente por venta presencial.
+---     El primero es cliente por venta presencial.
 DO $$
 BEGIN
 	INSERT INTO cliente (nombres, apellidos)
@@ -38,8 +38,8 @@ BEGIN
   END LOOP;
 END $$;
 
---- #3: Inserción de 5 salas, para cada una de
----			ellas hay 300 asientos.
+--- #2: Inserción de 5 salas, para cada una de
+---     ellas hay 300 asientos.
 INSERT INTO sala (tipo, cant_asientos) VALUES
 ('NORMAL', 300),
 ('NORMAL', 300),
@@ -47,8 +47,8 @@ INSERT INTO sala (tipo, cant_asientos) VALUES
 ('NORMAL', 300),
 ('3D', 300);
 
---- #4: Inserción de asientos para cada una de
----			las 5 salas. Son 300 para c/u.
+--- #3: Inserción de asientos para cada una de
+---     las 5 salas. Son 300 para c/u.
 DO $$
 BEGIN
   FOR i IN 1..5 LOOP
@@ -60,7 +60,7 @@ BEGIN
   END LOOP;
 END $$;
 
---- #3: Inserción de 3 películas por mes
+--- #4: Inserción de 3 películas por mes
 ---     desde enero 2022
 ---     hasta diciembre 2023
 
@@ -164,8 +164,8 @@ INSERT INTO pelicula (titulo, director, duracion, clasificacion_etaria, genero, 
 
 --- #5: Insertar 3 funciones para cada película
 ---     (películas 2022-2023).
----		Y para cada función, insertar boletos
----		vendidos (cantidad aleatoria).
+---     Y para cada función, insertar boletos
+---     vendidos (cantidad aleatoria).
 DO $$
 DECLARE
   sala_id INT;
@@ -224,7 +224,7 @@ $$ LANGUAGE plpgsql;
 
 
 
---- #2: Inserción de 5 películas por mes
+--- #6: Inserción de 5 películas por mes
 --- 	desde enero 2024 hasta abril 2025.
 INSERT INTO pelicula (titulo, director, duracion, clasificacion_etaria, genero, sinopsis) VALUES
 ---enero 2024
@@ -336,10 +336,10 @@ INSERT INTO pelicula (titulo, director, duracion, clasificacion_etaria, genero, 
 ('CÓMO ENTRENAR A TU DRAGÓN', 'Dean DeBlois', '2:05:00', 'ATP', 'Fantasía', 'Una adaptación live‑action: un joven vikingo se hace amigo de un dragón, rompiendo tradiciones.'),
 ('F1', 'Joseph Kosinski', '02:10:00', '+13', 'Deportes / Drama', 'Brad Pitt protagoniza un drama centrado en las intensas carreras de Fórmula 1.');
 
---- #5: Insertar 10 funciones para cada película.
+--- #7: Insertar 10 funciones para cada película.
 ---     (películas 2024-2025).
----		Y para cada función, insertar boletos
----		vendidos (cantidad aleatoria).
+---     Y para cada función, insertar boletos
+---     vendidos (cantidad aleatoria).
 DO $$
 DECLARE
   sala_id INT;
