@@ -4,6 +4,7 @@ from editar_boleto import editar_boleto
 from eliminar_boleto import eliminar_boleto
 from listar_boletos import listar_boletos
 from listar_funciones import listar_funciones
+from llenar_datos import llenar_datos
 
 import sys
 
@@ -16,6 +17,7 @@ def menu():
         print("4. Eliminar boleto")
         print("5. Listar boletos vendidos")
         print("6. Listar funciones")
+        print("7. Llenar DB con nuevos datos")
         print("s. Salir")
         opcion = input("Seleccione una opción: ").strip().lower()
 
@@ -32,6 +34,8 @@ def menu():
                 listar_boletos()
             case '6':
                 listar_funciones()
+            case '7':
+                llenar_datos()
             case 's':
                 print("Saliendo del sistema.")
                 break
