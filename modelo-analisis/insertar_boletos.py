@@ -3,7 +3,7 @@ def insertar_boletos(fuente_conn, dest_conn):
         print("-> -> -> Leyendo e insertando boletos en tabla de hechos...")
         fuente_cur.execute("""
         SELECT
-            b.num_asiento, p.id, f.id_sala, c.id,
+            b.id, b.num_asiento, p.id, f.id_sala, c.id,
             f.hora_inicio, f.hora_fin,
             b.hora_compra, b.precio, p.genero, p.clasificacion_etaria
         FROM boleto b
@@ -13,9 +13,10 @@ def insertar_boletos(fuente_conn, dest_conn):
         """)
         dest_cur.executemany("""
         INSERT INTO hechos_boletos (
+            id,
             num_asiento, id_pelicula, id_sala, id_cliente,
             hora_inicio_funcion, hora_fin_funcion,
             hora_compra, precio, genero, clasificacion_etaria
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, fuente_cur.fetchall())
     dest_conn.commit()

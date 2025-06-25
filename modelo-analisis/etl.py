@@ -4,9 +4,11 @@ from insertar_dimensiones import insertar_dimensiones
 from insertar_boletos import insertar_boletos
 import schedule
 import time
+from datetime import datetime
 
 def correr_etl():
     print("--- EJECUTANDO TAREA ETL ---")
+    print(datetime.now().strftime("%H:%M:%S")) # para que se muestren los tiempos en consola
     try:
         fuente_conn = conectar("cine_db_transaccional") # conexión fuente (transaccional)
         dest_conn = conectar("cine_db_analisis") # conexión destino (análisis)
