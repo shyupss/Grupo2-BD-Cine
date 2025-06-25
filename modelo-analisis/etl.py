@@ -6,6 +6,8 @@ import schedule
 import time
 from datetime import datetime
 
+import sys
+
 def correr_etl():
     print("--- EJECUTANDO TAREA ETL ---")
     print(datetime.now().strftime("%H:%M:%S")) # para que se muestren los tiempos en consola
@@ -31,4 +33,8 @@ def ejecutar_etl_scheduled():
         time.sleep(1)
 
 if __name__ == "__main__":
-    ejecutar_etl_scheduled()
+    try:
+        ejecutar_etl_scheduled()
+    except KeyboardInterrupt:
+        print("\nInterrumpido por usuario/terminal.")
+        sys.exit(0)
