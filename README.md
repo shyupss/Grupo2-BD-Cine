@@ -146,7 +146,7 @@ python analisis.py 2024
 
 ---
 
-### Descripción del flujo del script
+### Descripción del flujo del script (desfasado, script anterior!)
 
 1. El script pregunta si se desea crear la base de datos `cine_db_analisis` junto con su esquema correspondiente.
 2. Solicita la contraseña del usuario `postgres` para realizar las operaciones necesarias.
