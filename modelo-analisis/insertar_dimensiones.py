@@ -1,7 +1,9 @@
 # Esta función inserta los datos de registros en tablas cliente, sala, pelicula
 # de la cine_db_transaccional a la cine_db_relacional
 
-def insertar_dimensiones(fuente_conn, dest_conn):
+def insertar_dimensiones(fuente_conn, dest_conn, LOGGER):
+    LOGGER.debug("Se ha ejecutado el método 'insertar_dimensiones'.")
+
     with fuente_conn.cursor() as fuente_cur, dest_conn.cursor() as dest_cur: # alias para los cursores fuente y destino
 
         # Primero: insertar clientes

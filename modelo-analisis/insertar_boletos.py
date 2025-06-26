@@ -1,4 +1,6 @@
-def insertar_boletos(fuente_conn, dest_conn):
+def insertar_boletos(fuente_conn, dest_conn, LOGGER):
+    LOGGER.debug("Se ha ejecutado el método 'insertar_boletos'.")
+
     with fuente_conn.cursor() as fuente_cur, dest_conn.cursor() as dest_cur: # alias fuente cursor y destino cursor
         print("-> -> -> Leyendo e insertando boletos en tabla de hechos...")
         fuente_cur.execute("""
