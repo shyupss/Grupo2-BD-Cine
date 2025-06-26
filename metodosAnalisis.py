@@ -222,21 +222,21 @@ class ConsultasSql:
 
     def analisis_edad_por_genero_pelicula(self, anio):
         try:
-            # Consulta: Minimo, maximo y media de edad de los usuarios de los 10 generos más vistos
+            # Consulta: Caja y bigote de la edad de los usuarios de los 10 generos más vistos
             consulta = f'''
-            SELECT
-            hb.genero,
-            COUNT(*) AS total_vistas,
-            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY c.edad)) AS edad_mediana,
-            MIN(c.edad) AS edad_minima,
-            MAX(c.edad) AS edad_maxima
+            WITH generos_top AS (
+                SELECT genero
+                FROM hechos_boletos
+                WHERE EXTRACT(YEAR FROM hora_inicio_funcion) = {anio}
+                GROUP BY genero
+                ORDER BY COUNT(*) DESC
+                LIMIT 10
+            )
+            SELECT hb.genero, c.edad
             FROM hechos_boletos hb
             JOIN cliente c ON hb.id_cliente = c.id
-            JOIN pelicula p ON hb.id_pelicula = p.id
             WHERE EXTRACT(YEAR FROM hb.hora_inicio_funcion) = {anio}
-            GROUP BY hb.genero
-            ORDER BY total_vistas DESC
-            LIMIT 10;
+            AND hb.genero IN (SELECT genero FROM generos_top);
             '''
 
             self.obj.cur.execute(consulta)
@@ -244,20 +244,20 @@ class ConsultasSql:
             if not resultados: raise Exception(f"No hay datos de etarios para el año {anio}.")
 
             # Preparar datos
-            generos = [fila[0] for fila in resultados]
-            edades_min = [fila[3] for fila in resultados]
-            edades_max = [fila[4] for fila in resultados]
-            edades_med = [fila[2] for fila in resultados]
+            datos_por_genero = defaultdict(list)
+            for genero, edad in resultados:
+                datos_por_genero[genero].append(edad)
 
-            # Gráfico de bandera
+            # Gráfico de caja
+
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.barh(generos, [maxi - mini for mini, maxi in zip(edades_min, edades_max)],
-                    left=edades_min, color='skyblue', edgecolor='black')
-
-            # Línea vertical por edad mediana
-            for i, med in enumerate(edades_med):
-                ax.plot([med, med], [i - 0.4, i + 0.4], color='red', linewidth=2)
-
+            ax.boxplot(edades, vert=False, patch_artist=True, showmeans=True,
+                       boxprops=dict(facecolor='lightblue', color='black'),
+                       meanprops=dict(marker='o', markerfacecolor='red', markersize=8),
+                       medianprops=dict(color='orange', linewidth=2))
+            ax.set_xlim(0, 80)
+            ax.set_yticks(range(1, len(generos) + 1))
+            ax.set_yticklabels(generos)
             ax.set_xlabel("Edad")
             ax.set_title(f"Rangos Etarios por Género más visto en {anio}")
             plt.tight_layout()
