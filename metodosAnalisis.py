@@ -67,16 +67,23 @@ class ConsultasSql:
 
     def analisis_top_10_generos_menos_vistos(self, anio):
         try:
-            # Consulta: Top 10 generos por menor número de ventas en el año dado
+            # Consulta: 10 generos por menor número de ventas en el año dado
             consulta = f'''
-            SELECT hb.genero, COUNT(*) AS ventas
-            FROM hechos_boletos hb
-            JOIN pelicula p ON hb.id_pelicula = p.id
-            WHERE EXTRACT(YEAR FROM hb.hora_compra) = {anio}
-            GROUP BY hb.genero
-            ORDER BY ventas ASC
-            LIMIT 10;
+            WITH ranking_generos AS (
+                SELECT
+                    hb.genero,
+                    COUNT(*) AS ventas,
+                    RANK() OVER (ORDER BY COUNT(*) ASC) AS r
+                FROM hechos_boletos hb
+                WHERE EXTRACT(YEAR FROM hb.hora_compra) = {anio}
+                GROUP BY hb.genero
+            )
+            SELECT genero, ventas
+            FROM ranking_generos
+            WHERE r <= 10;
             '''
+            # Corregido para no usar LIMIT, como pidió el profe
+            # Usa RANK OVER COUNT y tabla anidada
 
             self.obj.cur.execute(consulta)
             resultados = self.obj.cur.fetchall()
@@ -86,6 +93,9 @@ class ConsultasSql:
             generos, ventas = zip(*resultados)
             if not generos or not ventas: raise Exception(f"No hay datos de generos suficientes para el año {anio}.")
 
+            generos, ventas = zip(*sorted(zip(generos, ventas), key=lambda x: x[1]))
+            generos = generos[::-1]
+            ventas = ventas[::-1]
             # Gráfico de barras horizontales
             plt.figure(figsize=(8, 6))
             plt.barh(generos, ventas)
@@ -338,6 +348,34 @@ class ConsultasSql:
             print(f"Gráfico guardado en: {ruta}")
 
         except Exception as e: print(f"# Error con analisis_pelicula_con_mayor_recaudacion_por_mes \nDetalle -> {e}")
+
+    def analisis_ventas_clasificacion_etaria(self, anio):
+        try:
+            self.obj.cur.execute(f"""
+            SELECT clasificacion_etaria, COUNT(*)
+            FROM hechos_boletos
+            WHERE EXTRACT(YEAR FROM hora_compra) = {anio}
+            GROUP BY clasificacion_etaria
+            ORDER BY COUNT(*) DESC;
+            """)
+            resultados = self.obj.cur.fetchall()
+            if not resultados:
+                print("No hay ventas para mostrar.")
+                return
+
+            etiquetas, cantidades = zip(*resultados)
+
+            plt.figure(figsize=(7, 7))
+            plt.pie(cantidades, labels=etiquetas, autopct='%1.1f%%', startangle=90)
+            plt.title(f"Distribución de ventas por clasificación etaria en el año {anio}")
+            plt.axis('equal')
+
+            os.makedirs(f"graficos/{inspect.currentframe().f_code.co_name}", exist_ok=True)
+            ruta = f"graficos/{inspect.currentframe().f_code.co_name}/{anio}.png"
+            plt.savefig(ruta)
+            print(f"Gráfico guardado en: {ruta}")
+        except Exception as e:
+            print(f"Error con analisis_ventas_clasificacion_etaria \n{e}")
 
     def cerrar(self):
         self.obj.cerrar_conexion()
