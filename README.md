@@ -123,7 +123,7 @@ python etl.py
 
 ## Instrucciones de Uso del Análisis de Datos (`analisis.py`)
 
-Este script permite realizar distintos análisis sobre los datos almacenados en la base de datos `db_cine`.
+Este script permite realizar distintos análisis sobre los datos almacenados en la base de datos `cine_db_analisis`.
 Al ejecutarlo, se generan gráficos y se muestran datos actualizados automáticamente según la información disponible.
 Es fundamental ejecutar el script desde el directorio raíz del proyecto, donde se encuentra el archivo `analisis.py`.
 
@@ -148,11 +148,11 @@ python analisis.py 2024
 
 ### Descripción del flujo del script
 
-1. El script pregunta si se desea crear la base de datos `db_cine` junto con su esquema correspondiente.
+1. El script pregunta si se desea crear la base de datos `cine_db_analisis` junto con su esquema correspondiente.
 2. Solicita la contraseña del usuario `postgres` para realizar las operaciones necesarias.
 3. Verifica si la base de datos y los usuarios ya existen y omite su creación si es así.
 4. Ofrece la opción de insertar datos de prueba en la base de datos.
-5. Se conecta como el usuario `user_cine` a la base de datos `db_cine`.
+5. Se conecta como el usuario `user_cine` a la base de datos `cine_db_analisis`.
 6. Presenta un menú con las distintas opciones de análisis que el usuario puede elegir para obtener información relevante.
 
 ---
