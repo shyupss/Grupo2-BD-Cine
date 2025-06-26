@@ -3,56 +3,63 @@ import argparse
 from db_modulos.crea_db_hechos import creaDbUser, insercionDatosPrueba
 from metodosAnalisis import ConsultasSql #Objeto de consultas
 
+DB_USER = "postgres"
+DB_NAME = "cine_db_analisis"
+DB_PASSWORD = "1234"
+DB_HOST = "localhost"
+DB_PORT = "5432"
+
 def main():
     # Recibimos el año
     parser = argparse.ArgumentParser(description="Analizar ventas de cine")
     parser.add_argument("anio", type=int, help="Año a analizar")
-    anioAnalizis = parser.parse_args().anio
+    anioAnalisis = parser.parse_args().anio
 
-    # año recibido
-    print(anioAnalizis)
-
-    # Se crea la DB 'db_cine' con su respectivo esquema
-    consultaExistenciaBD = str(input("Crear 'db_cine' con su respectivo esquema [Y/Yes = si, Cualquier Otro = no]: ")).lower()
-    if(consultaExistenciaBD == "y" or consultaExistenciaBD == "yes"): creaDbUser()
-
-    # Se insertan datos sobre la DB usando el User
-    consultaInsercionBD = str(input("Ingresar datos de prueba a la base de datos [Y/Yes = si, Cualquier Otro = no]: ")).lower()
-    if(consultaInsercionBD == "y" or consultaInsercionBD == "yes"): insercionDatosPrueba()
-    
     # Se crea el objeto mediante el cual se realizarán las peticiones, para hacer distintos gráficos
-    objectSql = ConsultasSql()
+    objectSql = ConsultasSql(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST)
 
     try:
         while(True):
-            peticion = str(input("""
-    Que desea análizar sobre la base de datos?
-    > El top 10 de las películas más vistas [1]
-    > El top 10 de géneros menos vistos [2]
-    > La ventas de algún año en particular [3]
-    > Las ventas por género en algún año [4]
-    > La edad por género de peliculas [5]
-    > Películas con mayor recaudación mensual del año [6]
-                """))
+            print("\n--- ANÁLISIS AÑO " + str(anioAnalisis) + " ---")
+            print("1. El top 10 de las películas que vendieron más boletos.")
+            print("2. El top 10 de los géneros que vendieron menos boletos.")
+            print("3. Recaudación en ventas de cada mes del " + str(anioAnalisis) + ".")
+            print("4. Las ventas de boletos por género de película.")
+            print("5. La edad por género de película.")
+            print("6. Las películas con mayor recaudación en cada mes del " + str(anioAnalisis) + ".")
+            print("7. Generar todos los gráficos.")
+            print("q. Salir.")
+            peticion = str(input("Seleccione una opción: ")).strip().lower()
             
             match peticion:
                 case "1":
-                    objectSql.analisis_top_10_peliculas_mas_vistas(anioAnalizis)
+                    objectSql.analisis_top_10_peliculas_mas_vistas(anioAnalisis)
                     break
                 case "2":
-                    objectSql.analisis_top_10_generos_menos_vistos(anioAnalizis)
+                    objectSql.analisis_top_10_generos_menos_vistos(anioAnalisis)
                     break
                 case "3":
-                    objectSql.analisis_ventas_anuales(anioAnalizis)
+                    objectSql.analisis_ventas_anuales(anioAnalisis)
                     break
                 case "4":
-                    objectSql.analisis_ventas_anuales_por_genero(anioAnalizis)
+                    objectSql.analisis_ventas_anuales_por_genero(anioAnalisis)
                     break
                 case "5":
-                    objectSql.analisis_edad_por_genero_pelicula(anioAnalizis)
+                    objectSql.analisis_edad_por_genero_pelicula(anioAnalisis)
                     break
                 case "6":
-                    objectSql.analisis_pelicula_con_mayor_recaudacion_por_mes(anioAnalizis)
+                    objectSql.analisis_pelicula_con_mayor_recaudacion_por_mes(anioAnalisis)
+                    break
+                case "7":
+                    objectSql.analisis_top_10_peliculas_mas_vistas(anioAnalisis)
+                    objectSql.analisis_top_10_generos_menos_vistos(anioAnalisis)
+                    objectSql.analisis_ventas_anuales(anioAnalisis)
+                    objectSql.analisis_ventas_anuales_por_genero(anioAnalisis)
+                    objectSql.analisis_edad_por_genero_pelicula(anioAnalisis)
+                    objectSql.analisis_pelicula_con_mayor_recaudacion_por_mes(anioAnalisis)
+                    break
+                case "q":
+                    print("Saliendo del sistema")
                     break
                 case _:
                     print("Ingrese algúna petición válida...\n")

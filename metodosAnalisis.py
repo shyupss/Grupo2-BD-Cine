@@ -69,11 +69,11 @@ class ConsultasSql:
         try:
             # Consulta: Top 10 generos por menor número de ventas en el año dado
             consulta = f'''
-            SELECT p.genero, COUNT(*) AS ventas
+            SELECT hb.genero, COUNT(*) AS ventas
             FROM hechos_boletos hb
             JOIN pelicula p ON hb.id_pelicula = p.id
             WHERE EXTRACT(YEAR FROM hb.hora_compra) = {anio}
-            GROUP BY p.genero
+            GROUP BY hb.genero
             ORDER BY ventas ASC
             LIMIT 10;
             '''
@@ -126,14 +126,15 @@ class ConsultasSql:
             meses, ventas = zip(*resultados)
             if not meses or not ventas: raise Exception(f"No hay datos de venta suficientes para el año {anio}.")
 
+            etiquetas_meses = [MESES[int(m)-1] for m in meses]
 
             # Grafico de linea
             plt.figure(figsize=(10, 5))
             plt.plot(meses, ventas, marker='o')
             plt.title(f"Ventas mensuales en el año {anio}")
             plt.xlabel("Mes")
-            plt.ylabel("Ventas (CLP)")
-            plt.xticks(meses)
+            plt.ylabel("Recaudación total en ventas (CLP)")
+            plt.xticks(meses, etiquetas_meses)
             plt.grid(True)
 
             # Guardar y mostrar...
@@ -155,13 +156,13 @@ class ConsultasSql:
             # Consulta: Ventas anuales por mes y genero
             consulta = f'''
             SELECT 
-            EXTRACT(MONTH FROM hb.hora_funcion)::int AS mes,
-            p.genero,
+            EXTRACT(MONTH FROM hb.hora_inicio_funcion)::int AS mes,
+            hb.genero,
             COUNT(*) AS total_ventas
             FROM hechos_boletos hb
             JOIN pelicula p ON hb.id_pelicula = p.id
-            WHERE EXTRACT(YEAR FROM hb.hora_funcion) = {anio}
-            GROUP BY mes, p.genero
+            WHERE EXTRACT(YEAR FROM hb.hora_inicio_funcion) = {anio}
+            GROUP BY mes, hb.genero
             ORDER BY mes;
             '''
 
@@ -214,7 +215,7 @@ class ConsultasSql:
             # Consulta: Minimo, maximo y media de edad de los usuarios de los 10 generos más vistos
             consulta = f'''
             SELECT
-            p.genero,
+            hb.genero,
             COUNT(*) AS total_vistas,
             ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY c.edad)) AS edad_mediana,
             MIN(c.edad) AS edad_minima,
@@ -222,8 +223,8 @@ class ConsultasSql:
             FROM hechos_boletos hb
             JOIN cliente c ON hb.id_cliente = c.id
             JOIN pelicula p ON hb.id_pelicula = p.id
-            WHERE EXTRACT(YEAR FROM hb.hora_funcion) = {anio}
-            GROUP BY p.genero
+            WHERE EXTRACT(YEAR FROM hb.hora_inicio_funcion) = {anio}
+            GROUP BY hb.genero
             ORDER BY total_vistas DESC
             LIMIT 10;
             '''
