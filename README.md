@@ -70,21 +70,51 @@ Por supuesto, aquí tienes la explicación completa en formato markdown, sin emo
 
 ## Instrucciones de Uso del Sistema Transaccional
 
-**Requisito**: utilizar un entorno virtual venv con la librería `psycopg2` (como se indicó previamente).
-El script `crear_db.py` crea una nueva base de datos `cine_db_transaccional` en la conexión del usuario `postgres`.
-Allí se alojan las tablas del sistema transaccional y, por lo tanto, también los datos de las transacciones manejadas desde `menu_transacciones.py`.
-En el caso de que aún no se haya inicializado la base de datos `cine_db_transaccional`, es necesario ejecutar el script `crear_db.py`:
+**Requisito**: utilizar un entorno virtual venv con las librerías en `requirements.txt` (como se indicó previamente). <br>
+El script `modelo-transaccional/crear_db.py` crea una nueva base de datos `cine_db_transaccional` en la conexión del usuario `postgres`.
+Allí se alojan las tablas del sistema transaccional y, por lo tanto, también los datos de las transacciones manejadas desde `modelo-transaccional/menu_transacciones.py`.
+
+
+En el caso de que aún no se haya inicializado la base de datos `cine_db_transaccional`, es necesario ejecutar el script `modelo-transaccional/crear_db.py`:
 
 ````markdown
 ```bash
+cd modelo-transaccional/
 python crear_db.py
 ````
 
-Una vez inicializada la base de datos, ya se puede ejecutar `menu_transacciones.py`.
+Una vez inicializada la base de datos, ya se puede ejecutar `modelo-transaccional/menu_transacciones.py`.
 
 ````markdown
 ```bash
+cd modelo-transaccional/
 python menu_transacciones.py
+````
+
+
+---
+
+## Instrucciones de Uso del Sistema ETL
+
+**Requisito**: utilizar un entorno virtual venv con las librerías en `requirements.txt` (como se indicó previamente). <br>
+El script `modelo-analisis/crear_db.py` crea una nueva base de datos `cine_db_analisis` en la conexión del usuario `postgres`.
+Allí se alojan las tablas del sistema de **análisis** o modelo estrella. El sistema ETL leerá los datos en `cine_db_transaccional` y los insertará en `cine_db_analisis`, según las tablas que correspondan.
+
+
+En el caso de que aún no se haya construido la base de datos `cine_db_analisis`, es necesario ejecutar el script `modelo-analisis/crear_db.py`:
+
+````markdown
+```bash
+cd modelo-analisis/
+python crear_db.py
+````
+
+Una vez inicializada la base de datos, ya se puede ejecutar `modelo-analisis/etl.py`.
+
+````markdown
+```bash
+cd modelo-analisis/
+python etl.py
 ````
 
 
@@ -93,7 +123,7 @@ python menu_transacciones.py
 
 ## Instrucciones de Uso del Análisis de Datos (`analisis.py`)
 
-Este script permite realizar distintos análisis sobre los datos almacenados en la base de datos `db_cine`.
+Este script permite realizar distintos análisis sobre los datos almacenados en la base de datos `cine_db_analisis`.
 Al ejecutarlo, se generan gráficos y se muestran datos actualizados automáticamente según la información disponible.
 Es fundamental ejecutar el script desde el directorio raíz del proyecto, donde se encuentra el archivo `analisis.py`.
 
@@ -105,8 +135,8 @@ Es fundamental ejecutar el script desde el directorio raíz del proyecto, donde 
 python analisis.py [AÑO]
 ````
 
-* `[AÑO]`: Corresponde al año para el cual se desea cargar o analizar los datos de ventas (por ejemplo, `2023` o `2020`).
-*Importante*: Para efectos de testeo de nuestra base de datos, solo se llenó con datos de enero del 2024 hasta abril del 2025. Si se manejan únicamente los datos suministrados por insercionDB.sql, probar solamente con el año 2024.
+* `[AÑO]`: Corresponde al año para el cual se desea cargar o analizar los datos de ventas (por ejemplo, `2023` o `2024`).
+*Importante*: Para efectos de testeo de nuestra base de datos, solo se llenó con datos de enero del 2022 hasta junio de 2025. Si se manejan únicamente los datos suministrados por la plantilla de inserciones de este repositorio, entonces probar solo con esos años.
 
 Ejemplo de uso:
 
@@ -116,13 +146,13 @@ python analisis.py 2024
 
 ---
 
-### Descripción del flujo del script
+### Descripción del flujo del script (desfasado, script anterior!)
 
-1. El script pregunta si se desea crear la base de datos `db_cine` junto con su esquema correspondiente.
+1. El script pregunta si se desea crear la base de datos `cine_db_analisis` junto con su esquema correspondiente.
 2. Solicita la contraseña del usuario `postgres` para realizar las operaciones necesarias.
 3. Verifica si la base de datos y los usuarios ya existen y omite su creación si es así.
 4. Ofrece la opción de insertar datos de prueba en la base de datos.
-5. Se conecta como el usuario `user_cine` a la base de datos `db_cine`.
+5. Se conecta como el usuario `user_cine` a la base de datos `cine_db_analisis`.
 6. Presenta un menú con las distintas opciones de análisis que el usuario puede elegir para obtener información relevante.
 
 ---

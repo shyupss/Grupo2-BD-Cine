@@ -22,10 +22,10 @@ def main():
         while(True):
             print("\n--- ANÁLISIS AÑO " + str(anioAnalisis) + " ---")
             print("1. El top 10 de las películas que vendieron más boletos.")
-            print("2. El top 10 de los géneros que vendieron menos boletos.")
+            print("2. Los 10 géneros de películas que vendieron menos boletos.")
             print("3. Recaudación en ventas de cada mes del " + str(anioAnalisis) + ".")
             print("4. Las ventas de boletos por género de película.")
-            print("5. La edad por género de película.")
+            print("5. Distribución de ventas por clasificación etaria (ATP, +13, +16, ...).")
             print("6. Las películas con mayor recaudación en cada mes del " + str(anioAnalisis) + ".")
             print("7. Generar todos los gráficos.")
             print("q. Salir.")
@@ -45,7 +45,7 @@ def main():
                     objectSql.analisis_ventas_anuales_por_genero(anioAnalisis)
                     break
                 case "5":
-                    objectSql.analisis_edad_por_genero_pelicula(anioAnalisis)
+                    objectSql.analisis_ventas_clasificacion_etaria(anioAnalisis)
                     break
                 case "6":
                     objectSql.analisis_pelicula_con_mayor_recaudacion_por_mes(anioAnalisis)
@@ -55,7 +55,7 @@ def main():
                     objectSql.analisis_top_10_generos_menos_vistos(anioAnalisis)
                     objectSql.analisis_ventas_anuales(anioAnalisis)
                     objectSql.analisis_ventas_anuales_por_genero(anioAnalisis)
-                    objectSql.analisis_edad_por_genero_pelicula(anioAnalisis)
+                    objectSql.analisis_ventas_clasificacion_etaria(anioAnalisis)
                     objectSql.analisis_pelicula_con_mayor_recaudacion_por_mes(anioAnalisis)
                     break
                 case "q":
