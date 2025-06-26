@@ -126,14 +126,15 @@ class ConsultasSql:
             meses, ventas = zip(*resultados)
             if not meses or not ventas: raise Exception(f"No hay datos de venta suficientes para el año {anio}.")
 
+            etiquetas_meses = [MESES[int(m)-1] for m in meses]
 
             # Grafico de linea
             plt.figure(figsize=(10, 5))
             plt.plot(meses, ventas, marker='o')
             plt.title(f"Ventas mensuales en el año {anio}")
             plt.xlabel("Mes")
-            plt.ylabel("Ventas (CLP)")
-            plt.xticks(meses)
+            plt.ylabel("Recaudación total en ventas (CLP)")
+            plt.xticks(meses, etiquetas_meses)
             plt.grid(True)
 
             # Guardar y mostrar...

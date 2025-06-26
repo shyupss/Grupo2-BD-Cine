@@ -23,7 +23,7 @@ def main():
             print("\n--- ANÁLISIS AÑO " + str(anioAnalisis) + " ---")
             print("1. El top 10 de las películas que vendieron más boletos.")
             print("2. El top 10 de los géneros que vendieron menos boletos.")
-            print("3. Las ventas de boletos de cada mes del " + str(anioAnalisis) + ".")
+            print("3. Recaudación en ventas de cada mes del " + str(anioAnalisis) + ".")
             print("4. Las ventas de boletos por género de película.")
             print("5. La edad por género de película.")
             print("6. Las películas con mayor recaudación en cada mes del " + str(anioAnalisis) + ".")
