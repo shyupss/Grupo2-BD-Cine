@@ -220,6 +220,7 @@ class ConsultasSql:
 
         except Exception as e: print(f"# Error con el analisis 'ventas anuales por genero'\nDetalle -> {e}")
 
+    
     def analisis_edad_por_genero_pelicula(self, anio):
         try:
             # Consulta: Obtener los géneros más vistos y las edades de sus clientes
@@ -300,6 +301,7 @@ class ConsultasSql:
             print(f"Géneros analizados: {', '.join(generos)}")
 
         except Exception as e: print(f"# Error con el analisis 'edad por genero'\nDetalle -> {e}")
+
 
 
     def analisis_pelicula_con_mayor_recaudacion_por_mes(self, anio):
