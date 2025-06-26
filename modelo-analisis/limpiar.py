@@ -1,4 +1,6 @@
-def limpiar(conn):
+def limpiar(conn, LOGGER):
+    LOGGER.debug("Se ha ejecutado el método 'limpiar'.")
+
     with conn.cursor() as cur:
         print("-> Borrando datos de cine_db_analisis...")
         cur.execute("DELETE FROM hechos_boletos")
