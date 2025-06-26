@@ -69,11 +69,11 @@ class ConsultasSql:
         try:
             # Consulta: Top 10 generos por menor número de ventas en el año dado
             consulta = f'''
-            SELECT hb.genero, COUNT(*) AS ventas
+            SELECT p.genero, COUNT(*) AS ventas
             FROM hechos_boletos hb
             JOIN pelicula p ON hb.id_pelicula = p.id
             WHERE EXTRACT(YEAR FROM hb.hora_compra) = {anio}
-            GROUP BY hb.genero
+            GROUP BY p.genero
             ORDER BY ventas ASC
             LIMIT 10;
             '''
@@ -126,15 +126,14 @@ class ConsultasSql:
             meses, ventas = zip(*resultados)
             if not meses or not ventas: raise Exception(f"No hay datos de venta suficientes para el año {anio}.")
 
-            etiquetas_meses = [MESES[int(m)-1] for m in meses]
 
             # Grafico de linea
             plt.figure(figsize=(10, 5))
             plt.plot(meses, ventas, marker='o')
             plt.title(f"Ventas mensuales en el año {anio}")
             plt.xlabel("Mes")
-            plt.ylabel("Recaudación total en ventas (CLP)")
-            plt.xticks(meses, etiquetas_meses)
+            plt.ylabel("Ventas (CLP)")
+            plt.xticks(meses)
             plt.grid(True)
 
             # Guardar y mostrar...
@@ -156,13 +155,13 @@ class ConsultasSql:
             # Consulta: Ventas anuales por mes y genero
             consulta = f'''
             SELECT 
-            EXTRACT(MONTH FROM hb.hora_inicio_funcion)::int AS mes,
-            hb.genero,
+            EXTRACT(MONTH FROM hb.hora_funcion)::int AS mes,
+            p.genero,
             COUNT(*) AS total_ventas
             FROM hechos_boletos hb
             JOIN pelicula p ON hb.id_pelicula = p.id
-            WHERE EXTRACT(YEAR FROM hb.hora_inicio_funcion) = {anio}
-            GROUP BY mes, hb.genero
+            WHERE EXTRACT(YEAR FROM hb.hora_funcion) = {anio}
+            GROUP BY mes, p.genero
             ORDER BY mes;
             '''
 
@@ -215,18 +214,12 @@ class ConsultasSql:
             # Consulta: Minimo, maximo y media de edad de los usuarios de los 10 generos más vistos
             consulta = f'''
             SELECT
-            hb.genero,
-            COUNT(*) AS total_vistas,
-            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY c.edad)) AS edad_mediana,
-            MIN(c.edad) AS edad_minima,
-            MAX(c.edad) AS edad_maxima
+            p.genero,
+            c.edad
             FROM hechos_boletos hb
             JOIN cliente c ON hb.id_cliente = c.id
             JOIN pelicula p ON hb.id_pelicula = p.id
-            WHERE EXTRACT(YEAR FROM hb.hora_inicio_funcion) = {anio}
-            GROUP BY hb.genero
-            ORDER BY total_vistas DESC
-            LIMIT 10;
+            WHERE EXTRACT(YEAR FROM hb.hora_funcion) = {anio};
             '''
 
             self.obj.cur.execute(consulta)
@@ -234,22 +227,25 @@ class ConsultasSql:
             if not resultados: raise Exception(f"No hay datos de etarios para el año {anio}.")
 
             # Preparar datos
-            generos = [fila[0] for fila in resultados]
-            edades_min = [fila[3] for fila in resultados]
-            edades_max = [fila[4] for fila in resultados]
-            edades_med = [fila[2] for fila in resultados]
+            datos_por_genero = defaultdict(list)
+            for genero, edad in resultados:
+                datos_por_genero[genero].append(edad)
 
-            # Gráfico de bandera
+            generos = list(datos_por_genero.keys())
+            edades = list(datos_por_genero.values())
+
+            # Gráfico de caja
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.barh(generos, [maxi - mini for mini, maxi in zip(edades_min, edades_max)],
-                    left=edades_min, color='skyblue', edgecolor='black')
-
-            # Línea vertical por edad mediana
-            for i, med in enumerate(edades_med):
-                ax.plot([med, med], [i - 0.4, i + 0.4], color='red', linewidth=2)
-
+            ax.boxplot(edades, vert=False, patch_artist=True, showmeans=True,
+                   boxprops=dict(facecolor='lightblue', color='black'),
+                   meanprops=dict(marker='o', markerfacecolor='red', markersize=8),
+                   medianprops=dict(color='orange', linewidth=2))
+            ax.set_xlim(0, 80)
+            ax.set_yticks(range(1, len(generos) + 1))
+            ax.set_yticklabels(generos)
             ax.set_xlabel("Edad")
-            ax.set_title(f"Rangos Etarios por Género más visto en {anio}")
+            ax.set_title(f"Distribución de Edades por Género más visto en {anio}")
+
             plt.tight_layout()
 
             # Guardar y mostrar...
