@@ -146,43 +146,24 @@ python analisis.py 2024
 
 ---
 
-### Descripción del flujo del script (desfasado, script anterior!)
+### Descripción del flujo de los scripts
 
-1. El script pregunta si se desea crear la base de datos `cine_db_analisis` junto con su esquema correspondiente.
-2. Solicita la contraseña del usuario `postgres` para realizar las operaciones necesarias.
-3. Verifica si la base de datos y los usuarios ya existen y omite su creación si es así.
-4. Ofrece la opción de insertar datos de prueba en la base de datos.
-5. Se conecta como el usuario `user_cine` a la base de datos `cine_db_analisis`.
-6. Presenta un menú con las distintas opciones de análisis que el usuario puede elegir para obtener información relevante.
-
----
-
-### Opciones de análisis disponibles
-
-Al iniciar el script, se muestra un menú con las siguientes opciones:
-
-1. Top 10 de las películas más vistas
-2. Top 10 de géneros menos vistos
-3. Ventas en un año particular
-4. Ventas por género en un año específico
-5. Edad promedio del público por género de películas
-6. Películas con mayor recaudación mensual del año
-
-Para cada análisis seleccionado, el programa:
-
-* Genera y muestra un gráfico correspondiente.
-* Muestra los datos en consola.
-* Guarda el gráfico o actualiza el existente si ya fue generado antes.
+1. Construir `cine_db_transaccional` en usuario `postgres` con `modelo-transaccional/crear_db.py`.
+2. Una vez construida `cine_db_transaccional`, ya es posible manipular desde `modelo-transaccional/menu_transaccional.py`.
+3. Construir `cine_db_analisis` en usuario `postgres` con `modelo-analisis/crear_db.py`.
+4. Ejecutar `modelo-analisis/etl.py`, proceso con scheduler (cada 5 min.). Este sistema ETL primero limpia toda la `cine_db_analisis`. Después lee los datos en `cine_db_transaccional` para volver a llenar `cine_db_analisis`.
+5. Ahora, desde el directorio principal, ejecutar `analisis.py` como está indicado en instrucciones. Desde allí, se mostrará un menú para generar los gráficos de análisis.
+6. Según la opción escogida en `analisis.py`, se guardan los gráficos en directorio `graficos/`, o bien, actualiza los ya existentes si ya fueron generados para el mismo año.
 
 ---
 
 ### Consideraciones importantes
 
-* El script reutiliza los datos ya existentes en la base de datos y actualiza los gráficos con información vigente.
-* Si no existen datos de ventas para el año solicitado, el programa notificará al usuario y no generará gráficos.
+* Si no existen datos de ventas para el año solicitado en `analisis.py`, el programa notificará al usuario y no generará gráficos.
 * Es necesario que el servidor de PostgreSQL esté activo y configurado correctamente para permitir conexiones.
-* El usuario por defecto para la conexión a la base de datos es `user_cine` con contraseña `1234`, a menos que se haya modificado.
-* El script debe ejecutarse siempre desde el directorio raíz del proyecto, para que funcione correctamente.
+* El usuario por defecto para la conexión a la base de datos es `postgres` con contraseña `1234`.
+* El script `analisis.py` debe ejecutarse siempre desde el directorio raíz del proyecto, para que funcione correctamente.
+* Los scripts `modelo-transaccional/crear_db.py`, `modelo-transaccional/menu_transaccional.py`, `modelo-analisis/crear_db.py` y `modelo-analisis/etl.py` deben ejecutarse **siempre** desde sus respectivos directorios.
 
 ---
 
